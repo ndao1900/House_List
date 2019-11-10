@@ -1,0 +1,20 @@
+<mat-card class="container" (click)="onClick()">
+  <mat-card-header class="container-hdr">
+    <mat-card-title>{{container.name}}</mat-card-title>
+  </mat-card-header>
+  <input [(ngModel)]="itemSearchTerm" placeholder="search..." *ngIf="editable"/>
+  <mat-card-content>
+    <div (click)="onItemClick($event,itemObj.value._id)" [ngClass]="editable? 'editable-item':''" 
+    *ngFor="let itemObj of container.items | keyvalue">
+      <app-item *ngIf="itemObj.value.name.includes(itemSearchTerm.toLowerCase())" [item]="itemObj.value"
+        (contextmenu)="onItemRightClick($event,itemObj.value)"></app-item>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button *ngIf="canAddNewItem" mat-button (click)="onAddClick()">Add</button>
+  </mat-card-actions>
+</mat-card>
+
+<app-item-context-menu id="ItemContextMenu" *ngIf="showItemContextMenu"
+  [position]="itemContextMenuPosition" (onOptionSelect)="onItemContextMenuOptionSelect($event)">
+</app-item-context-menu>

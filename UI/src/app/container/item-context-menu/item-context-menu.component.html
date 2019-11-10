@@ -1,0 +1,4 @@
+<div class="item-context-menu" [ngStyle]="{'position':'fixed','left.px': position.x, 'top.px': position.y}">
+    <div (click)="onOptionSelect.emit(ItemContextMenuOptionsEnum.EDIT)">EDIT</div>
+    <div (click)="onOptionSelect.emit(ItemContextMenuOptionsEnum.DELETE)">DELETE</div>
+</div>

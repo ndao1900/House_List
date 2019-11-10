@@ -1,0 +1,5 @@
+<div id="home">
+  <ng-container *ngFor="let containerEntry of containerMap | keyvalue">
+    <app-container (onContainerClick)="onContainerClick($event)" [container]="containerEntry.value" class="app-flex-item"></app-container>
+  </ng-container>  
+</div>

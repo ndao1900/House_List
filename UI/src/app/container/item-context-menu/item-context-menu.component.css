@@ -1,0 +1,8 @@
+.item-context-menu div{
+    cursor: default;
+}
+
+.item-context-menu div:hover{
+    background: rgb(48, 48, 48);
+    color:white;
+}

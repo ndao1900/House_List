@@ -1,0 +1,22 @@
+<div id="edit">
+  <div id="containerDiv">
+    <app-container [container]='selectedContainer' [editable]="true"
+    (onItemSelect)="onContainerItemSelect($event)"></app-container>
+  </div>
+  <div>&lt;=&gt;</div>
+  <div id="availItemDiv">
+    <app-container [container]='{name:"Available Items",items:selectedContainer.availableItems}'
+    (onItemSelect)="onAvailableItemSelect($event)" [editable]="true" #availItems></app-container>
+  </div>
+  <button mat-button (click)="onAddClick()">Add</button>
+</div>
+
+<div class="back-drop" *ngIf="addingItem" (click)="onBackDropClick($event)">
+  <div id='itemStorage'>
+    <app-container [canAddNewItem]="true" [container]="itemStorage" [editable]="true"
+    (onItemSelect)="onStorageItemSelect($event)" (onItemAdd)="onStorageItemAdd($event)"
+    (onItemDel)="onStorageItemDel($event)" (onItemEdit)="onStorageItemEdit($event)"
+    ></app-container>
+  </div>
+</div>
+

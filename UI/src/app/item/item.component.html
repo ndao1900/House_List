@@ -1,0 +1,6 @@
+<div class='item' [ngStyle]="item.style? item.style:{}">
+    <div>{{item.name}}</div>
+    <div style="text-align: center;">{{item.quantity > 1? 'x'+item.quantity.toString():''}}</div>
+    <div style="text-align: center;">{{item.price}}${{item.unit? "/"+item.unit:""}}</div>
+</div>
+
