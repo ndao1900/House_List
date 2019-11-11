@@ -15,9 +15,7 @@ export class SessionService {
 
   constructor(private httpClient:HttpClient, private envSv:EnvService) { }
 
-  getSelectedContainer(){
-    return this.selectedContainer.asObservable();
-  }
+  getSelectedContainer(){return this.selectedContainer.asObservable();}
 
   setSelectedContainer(container:Container){this.selectedContainer.next(container);}
 
@@ -40,7 +38,7 @@ export class SessionService {
             console.error("Missing id in item: "+JSON.stringify(obj))
           return map;
         },{})
-        this.setItemStorage(new Container({items:itemsMap}))
+        this.setItemStorage(new Container({name:'Item Storage',items:itemsMap}))
       })
       resolve(null)
     })

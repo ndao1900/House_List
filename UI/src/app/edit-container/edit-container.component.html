@@ -6,10 +6,12 @@
   <div>&lt;=&gt;</div>
   <div id="availItemDiv">
     <app-container [container]='{name:"Available Items",items:selectedContainer.availableItems}'
-    (onItemSelect)="onAvailableItemSelect($event)" [editable]="true" #availItems></app-container>
+    (onItemSelect)="onAvailableItemSelect($event)"
+    (onItemContextMenu)="onAvailableItemContextMenu($event)" 
+    [editable]="true" #availItems></app-container>
   </div>
   <button mat-button (click)="onAddClick()">Add</button>
-  <button mat-button (click)="onSaveClick()">Save</button>
+  <button mat-button [disabled]="!containerChanged" (click)="onSaveClick()">Save</button>
 </div>
 
 <div class="back-drop" *ngIf="addingItem" (click)="onBackDropClick($event)">

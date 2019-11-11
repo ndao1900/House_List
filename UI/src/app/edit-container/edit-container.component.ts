@@ -8,6 +8,7 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog
 import { GenericDialogComponent } from '../generic-dialog/generic-dialog.component';
 import { HttpClient } from '@angular/common/http';
 import { EnvService } from '../services/env.service';
+import { Subscription } from 'rxjs';
 
 
 
@@ -17,27 +18,28 @@ import { EnvService } from '../services/env.service';
   styleUrls: ['./edit-container.component.css']
 })
 export class EditContainerComponent implements OnInit {
+  subs:Array<Subscription> = []
 
-  @ViewChild(ContainerComponent,{static:false}) availItems:ContainerComponent
   selectedContainer:Container;
   itemStorage:Container;
   addingItem:boolean;
+  containerChanged = false;
 
   constructor(private sessionSv:SessionService, private router:Router, public dialog: MatDialog,
      private httpClient:HttpClient, private envSv:EnvService) { }
 
   ngOnInit() {
-    this.sessionSv.getSelectedContainer().subscribe((container:Container)=>{
+    this.subs.push(this.sessionSv.getSelectedContainer().subscribe((container:Container)=>{
       this.selectedContainer = container
       this.updateItemsStyle("availItem")
       if(this.selectedContainer.name == null)
         this.router.navigate(['/Home'])
-    })
+    }))
 
-    this.sessionSv.getItemStorage().subscribe((container:Container)=>{
+    this.subs.push(this.sessionSv.getItemStorage().subscribe((container:Container)=>{
       this.itemStorage = container;
       this.updateItemsStyle("");
-    })
+    }))
   }
 
   onContainerItemSelect(_id){
@@ -47,6 +49,7 @@ export class EditContainerComponent implements OnInit {
     else
       item.quantity--;
     this.updateItemsStyle("availItem");
+    this.containerChanged = true;
   }
 
   onAvailableItemSelect(_id){
@@ -55,7 +58,13 @@ export class EditContainerComponent implements OnInit {
     else
       this.selectedContainer.items[_id] = new Item(this.selectedContainer.availableItems[_id])
     this.updateItemsStyle("availItem");
-      // console.log("Container item: "+(index+1).toString()+" selected")
+    this.containerChanged = true;
+  }
+
+  onAvailableItemContextMenu(_id){
+    this.updateItemsStyle("");
+    delete this.selectedContainer.availableItems[_id]
+    this.containerChanged = true;
   }
 
   updateItemsStyle(whichOne:string){
@@ -79,15 +88,6 @@ export class EditContainerComponent implements OnInit {
 
   onAddClick(){
     this.addingItem = true;
-    // const dialogRef = this.dialog.open(GenericDialogComponent, {
-    //   width: '30vw',
-    //   data: {title:"Add Available Item", value:new Item()}
-    // });
-
-    // dialogRef.afterClosed().subscribe(result => {
-    //   result._id = 99
-    //   this.selectedContainer.availableItems[99]=result;
-    // });
   }
 
   onStorageItemSelect(_id){
@@ -95,6 +95,7 @@ export class EditContainerComponent implements OnInit {
       this.selectedContainer.availableItems[_id] = Object.assign({},this.itemStorage.items[_id])
       this.updateItemsStyle("");
       this.addingItem = false;
+      this.containerChanged = true;
     }
   }
 
@@ -120,5 +121,12 @@ export class EditContainerComponent implements OnInit {
 
   async onSaveClick(){
     await this.httpClient.put(this.envSv.getBE_URL()+'/containers/'+this.selectedContainer._id,this.selectedContainer).toPromise();
+    this.containerChanged = false;
+  }
+
+  ngOnDestroy(){
+    for(let sub of this.subs){
+      sub.unsubscribe()
+    }
   }
 }

@@ -20,7 +20,8 @@ export class ContainerComponent implements OnInit {
   @Input() canAddNewItem=false;
   @Input() itemStyleMap:{[_id:number]:any}
   @Output() onContainerClick = new EventEmitter<Container>();
-  @Output() onItemSelect = new EventEmitter<number>();
+  @Output() onItemSelect = new EventEmitter<any>();
+  @Output() onItemContextMenu = new EventEmitter<any>();
   @Output() onItemAdd = new EventEmitter<Item>();
   @Output() onItemDel = new EventEmitter<Item>();
   @Output() onItemEdit = new EventEmitter<Item>();
@@ -71,8 +72,9 @@ export class ContainerComponent implements OnInit {
       this.itemContextMenuPosition = {x:event.x,y:event.y}
       this.showItemContextMenu = true;
       this.itemRightClicked = item;
-      return false;
     }
+    this.onItemContextMenu.emit(item._id)
+    return false;
   }
 
   onItemContextMenuOptionSelect(option:ItemContextMenuOptionsEnum){

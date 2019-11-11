@@ -7,11 +7,7 @@ export class Container extends Thing{
 
     constructor(container?:Container){
         super(container);
-        this.availableItems = {
-            0:new Item({_id:0,name:"banana"}),
-            1:new Item({_id:1,name:"bread"}),
-            2:new Item({_id:2,name:"muffin"}),
-        }
+        this.availableItems = {}
         this.items = {}
         if(container)
             Object.assign(this,container)
