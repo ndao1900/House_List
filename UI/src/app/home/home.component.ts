@@ -2,6 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { SessionService } from '../services/session.service';
 import { Router } from '@angular/router';
 import { Container } from '../data-model/container';
+import { MatDialog } from '@angular/material/dialog';
+import { GenericDialogComponent } from '../generic-dialog/generic-dialog.component';
+import { HttpClient } from '@angular/common/http';
+import { EnvService } from '../services/env.service';
+import { ItemContextMenuOptionsEnum } from '../container/item-context-menu/item-context-menu.component';
 
 @Component({
   selector: 'app-home',
@@ -10,16 +15,17 @@ import { Container } from '../data-model/container';
 })
 export class HomeComponent implements OnInit {
 
-  containerMap={
-    0:new Container({_id:0,name:'container0'}),
-    1:new Container({_id:1,name:'container1'}),
-    2:new Container({_id:2,name:'container2'}),
-    3:new Container({_id:3,name:'container3'}),
-  }
+  containerMap={}
+  showItemContextMenu = false;
+  itemContextMenuPosition = {x:0,y:0}
+  containerRightClicked;
 
-  constructor(private sessionSv:SessionService, private router:Router) { }
+  constructor(private sessionSv:SessionService, private router:Router,  public dialog: MatDialog, private httpClient:HttpClient,
+    private envSv:EnvService) { }
 
   ngOnInit() {
+    this.sessionSv.getContainerMap().subscribe(cMap=>{this.containerMap = cMap})
+    this.sessionSv.refreshContainers();
   }
 
   onContainerClick(container){
@@ -27,4 +33,50 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/EditContainer'])
   }
 
+  onAddContainerClick(){
+    const dialogRef = this.dialog.open(GenericDialogComponent, {
+      width: '30vw',
+      data: {title:"Add New Container", value:new Container()}
+    });
+
+    dialogRef.afterClosed().subscribe(async result => {
+      if(result != null){
+        result = new Container(result)
+        await this.httpClient.post(this.envSv.getBE_URL()+'/containers/',result).toPromise();
+        this.sessionSv.refreshContainers();
+      }
+    });
+  }
+
+  onContainerRightClick(event,container){
+    this.itemContextMenuPosition = {x:event.x,y:event.y}
+    this.showItemContextMenu = true;
+    this.containerRightClicked = container;
+    return false;
+  }
+
+  async onItemContextMenuOptionSelect(option:ItemContextMenuOptionsEnum){
+    this.showItemContextMenu = false;
+    switch(option){
+      case ItemContextMenuOptionsEnum.DELETE:{
+        await this.httpClient.delete(this.envSv.getBE_URL()+'/containers/'+this.containerRightClicked._id).toPromise();
+        this.sessionSv.refreshContainers();
+        break;
+      }
+      case ItemContextMenuOptionsEnum.EDIT:{
+        const dialogRef = this.dialog.open(GenericDialogComponent, {
+          width: '30vw',
+          data: {title:"Edit Container", value:this.containerRightClicked}
+        });
+    
+        dialogRef.afterClosed().subscribe(async result => {
+          if(result != null){
+            result = Object.assign(this.containerRightClicked,result)
+            await this.httpClient.put(this.envSv.getBE_URL()+'/containers/'+this.containerRightClicked._id,this.containerRightClicked).toPromise();
+            this.sessionSv.refreshContainers();
+          }
+        });
+      }
+    }
+  }
 }

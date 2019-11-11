@@ -10,15 +10,8 @@ import { resolve } from 'url';
 export class SessionService {
 
   selectedContainer = new BehaviorSubject<Container>(new Container);
-  itemStorage = new BehaviorSubject<Container>(new Container({
-    name:"Item Storage",
-    items:{
-      0:new Item({_id:0,name:"banana"}),
-      1:new Item({_id:1,name:"bread"}),
-      2:new Item({_id:2,name:"muffin"}),
-      3:new Item({_id:3,name:"pepper"}),
-    }
-  }))
+  itemStorage = new BehaviorSubject<Container>({})
+  containerMap = new BehaviorSubject<any>({})
 
   constructor(private httpClient:HttpClient, private envSv:EnvService) { }
 
@@ -26,17 +19,15 @@ export class SessionService {
     return this.selectedContainer.asObservable();
   }
 
-  setSelectedContainer(container:Container){
-    this.selectedContainer.next(container);
-  }
+  setSelectedContainer(container:Container){this.selectedContainer.next(container);}
 
-  getItemStorage(){
-    return this.itemStorage.asObservable()
-  }
+  getItemStorage(){return this.itemStorage.asObservable()}
 
-  setItemStorage(container:Container){
-    this.itemStorage.next(container)
-  }
+  setItemStorage(container:Container){this.itemStorage.next(container)}
+  
+  getContainerMap(){return this.containerMap.asObservable()}
+
+  setContainerMap(containerMap:any){this.containerMap.next(containerMap)}
   
   async refreshItemStorage(){
     return new Promise(async resolve=>{
@@ -53,6 +44,22 @@ export class SessionService {
       })
       resolve(null)
     })
+  }
 
+  async refreshContainers(){
+    return new Promise(async resolve=>{
+      await this.httpClient.get(this.envSv.getBE_URL()+"/containers").toPromise()
+      .then((containers:Array<any>)=>{
+        let newContainerMap = containers.reduce((map,obj,index)=>{
+          if(obj['_id'])
+            map[obj['_id']] = obj;
+          else
+            console.error("Missing id in item: "+JSON.stringify(obj))
+          return map;
+        },{})
+        this.setContainerMap(newContainerMap)
+      })
+      resolve(null)
+    })
   }
 }

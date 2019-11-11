@@ -117,4 +117,8 @@ export class EditContainerComponent implements OnInit {
     await this.httpClient.put(this.envSv.getBE_URL()+'/items/'+item._id,item).toPromise();
     this.sessionSv.refreshItemStorage();
   }
+
+  async onSaveClick(){
+    await this.httpClient.put(this.envSv.getBE_URL()+'/containers/'+this.selectedContainer._id,this.selectedContainer).toPromise();
+  }
 }

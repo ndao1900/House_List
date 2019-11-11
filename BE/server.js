@@ -25,19 +25,7 @@ app.use(body_parser.json());
 app.use(cors(corsOptions));
 var port = 8080;
 require('./routes/item.routes.js')(app);
+require('./routes/container.routes.js')(app);
 app.listen(port, ()=>{console.log('Server started on port '+port.toString())})
 
 mongoose.connect(MONGO_URL,)
-
-app.get("/getItems",(req,res,next)=>{
-    MongoClient.connect(MONGO_URL, async (err,db)=>{
-        if(err) throw err;
-        var dbo = db.db("test")
-        try{
-            result = await dbo.collection("items").find().toArray();
-            res.send(result)
-        }catch(e){
-            console.error(e)
-        }
-    })
-})

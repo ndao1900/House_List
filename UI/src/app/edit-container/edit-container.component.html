@@ -9,6 +9,7 @@
     (onItemSelect)="onAvailableItemSelect($event)" [editable]="true" #availItems></app-container>
   </div>
   <button mat-button (click)="onAddClick()">Add</button>
+  <button mat-button (click)="onSaveClick()">Save</button>
 </div>
 
 <div class="back-drop" *ngIf="addingItem" (click)="onBackDropClick($event)">
