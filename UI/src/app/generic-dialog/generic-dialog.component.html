@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{data.title}}</h1>
 <div mat-dialog-content class="dialog-content">
     <div *ngFor="let valueObj of data.value | keyvalue; trackBy:trackByFn" >
-        <ng-container *ngIf="!['createdAt','updatedAt','__v','items','availableItems'].includes(valueObj.key)">
+        <ng-container *ngIf="!['createdAt','updatedAt','__v','_id','items','availableItems'].includes(valueObj.key)">
             <p style="font-weight: bold;">{{valueObj.key}}</p>
             <mat-form-field style="width: 100%;">
                 <input [disabled]="valueObj.key == '_id'" matInput [(ngModel)]="data.value[valueObj.key]">

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, HostListener, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-item-context-menu',
@@ -8,16 +8,25 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 export class ItemContextMenuComponent implements OnInit {
 
   @Input() position:{x:number;y:number}
+  @Input() availableOptions:Array<ItemContextMenuOptionsEnum>
   @Output() onOptionSelect = new EventEmitter<ItemContextMenuOptionsEnum>()
+  @Output() onOutsideClick = new EventEmitter<any>()
   
   ItemContextMenuOptionsEnum = ItemContextMenuOptionsEnum;
-  constructor() { }
+  constructor(private eRef:ElementRef) { }
+  
+  @HostListener('document:click', ['$event'])
+  clickout(event) {
+    if(!this.eRef.nativeElement.contains(event.target)) {
+      this.onOutsideClick.emit()
+    }
+  }
 
   ngOnInit() {}
 
 }
 
 export enum ItemContextMenuOptionsEnum{
-  DELETE,
-  EDIT
+  DELETE = 'delete',
+  EDIT = 'edit'
 }

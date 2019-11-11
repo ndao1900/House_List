@@ -29,7 +29,8 @@ export class ContainerComponent implements OnInit {
   
   itemRightClicked:Item = null;
   showItemContextMenu=false;
-  itemContextMenuPosition:{x:number,y:number}={x:0,y:0}
+  itemContextMenuPosition:{x:number,y:number}={x:0,y:0};
+  availableContextMenuOption = [ItemContextMenuOptionsEnum.DELETE, ItemContextMenuOptionsEnum.EDIT];
 
 
   constructor(private router:Router, private sessionSv:SessionService, public dialog: MatDialog, private renderer:Renderer2) {}
@@ -87,7 +88,7 @@ export class ContainerComponent implements OnInit {
       case ItemContextMenuOptionsEnum.EDIT:{
         const dialogRef = this.dialog.open(GenericDialogComponent, {
           width: '30vw',
-          data: {title:"Edit Item", value:this.itemRightClicked}
+          data: {title:"Edit Item "+this.itemRightClicked.name, value:this.itemRightClicked}
         });
     
         dialogRef.afterClosed().subscribe(result => {
@@ -98,6 +99,7 @@ export class ContainerComponent implements OnInit {
         });
       }
     }
-
   }
+
+  hideContextMenu(){this.showItemContextMenu = false}
 }

@@ -62,8 +62,8 @@ export class EditContainerComponent implements OnInit {
   }
 
   onAvailableItemContextMenu(_id){
-    this.updateItemsStyle("");
     delete this.selectedContainer.availableItems[_id]
+    this.itemStorage.items[_id].style = {};
     this.containerChanged = true;
   }
 

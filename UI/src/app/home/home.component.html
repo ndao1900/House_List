@@ -6,6 +6,7 @@
   <button mat-button (click)="onAddContainerClick()">Add Container</button> 
 </div>
 
-<app-item-context-menu *ngIf="showItemContextMenu"
-  [position]="itemContextMenuPosition" (onOptionSelect)="onItemContextMenuOptionSelect($event)">
+<app-item-context-menu *ngIf="showItemContextMenu" 
+  [availableOptions]="availableContextMenuOption" [position]="itemContextMenuPosition" 
+  (onOptionSelect)="onItemContextMenuOptionSelect($event)" (onOutsideClick)="hideContextMenu()"> 
 </app-item-context-menu>

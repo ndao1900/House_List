@@ -15,6 +15,7 @@
   </mat-card-actions>
 </mat-card>
 
-<app-item-context-menu id="ItemContextMenu" *ngIf="showItemContextMenu"
-  [position]="itemContextMenuPosition" (onOptionSelect)="onItemContextMenuOptionSelect($event)">
+<app-item-context-menu id="ItemContextMenu" *ngIf="showItemContextMenu" [availableOptions]="availableContextMenuOption"
+  [position]="itemContextMenuPosition" 
+  (onOptionSelect)="onItemContextMenuOptionSelect($event)" (onOutsideClick)="hideContextMenu()">
 </app-item-context-menu>
