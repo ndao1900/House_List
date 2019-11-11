@@ -10,7 +10,8 @@ var MONGO_URL = "mongodb://127.0.0.1:27017/";
 
 var originsWhitelist = [
     'http://localhost:4200',
-    'localhost:4200/*'
+    'localhost:4200/*',
+    'https://ndao1900.github.io/*'
 ];
 var corsOptions = {
     origin: function(origin, callback){
