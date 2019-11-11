@@ -16,7 +16,6 @@ import {MatInputModule} from '@angular/material/input';
 import {HttpClientModule} from '@angular/common/http'
 
 import { GenericDialogComponent } from './generic-dialog/generic-dialog.component';
-import { ItemSelectComponent } from './item-select/item-select.component';
 import { ItemContextMenuComponent } from './container/item-context-menu/item-context-menu.component';
 
 
@@ -28,7 +27,6 @@ import { ItemContextMenuComponent } from './container/item-context-menu/item-con
     HomeComponent,
     EditContainerComponent,
     GenericDialogComponent,
-    ItemSelectComponent,
     ItemContextMenuComponent,
   ],
   imports: [

@@ -2,7 +2,7 @@
   <mat-card-header class="container-hdr">
     <mat-card-title>{{container.name}}</mat-card-title>
   </mat-card-header>
-  <input [(ngModel)]="itemSearchTerm" placeholder="search..." *ngIf="editable"/>
+  <input [(ngModel)]="itemSearchTerm" placeholder="search..." (click)="$event.stopPropagation()"/>
   <mat-card-content>
     <div (click)="onItemClick($event,itemObj.value._id)" [ngClass]="editable? 'editable-item':''" 
     *ngFor="let itemObj of container.items | keyvalue">

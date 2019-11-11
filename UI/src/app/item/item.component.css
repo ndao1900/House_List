@@ -1,4 +1,8 @@
 .item{
     display: grid;
     grid-template-columns: 70% 15% 15%;
+    height: 5vh;
+    align-items: center;
+    padding-left: 10px;
+    font-size: 3vh;
 }
