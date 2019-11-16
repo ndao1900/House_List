@@ -10,7 +10,7 @@ exports.create = (req, res) => {
     const item = new Item({
         name: req.body.name, 
         price: req.body.price || 0,
-        unit: req.body.price || ""        
+        unit: req.body.unit || ""        
     });
 
     item.save()
