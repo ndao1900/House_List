@@ -13,7 +13,7 @@ export class EnvService {
       case "dev":
         return "http://localhost:8080";
       case "test":
-        return "https://ec2-54-183-228-115.us-west-1.compute.amazonaws.com"
+        return "https://0dc1f2a9.ngrok.io"
     }
   }
 }
