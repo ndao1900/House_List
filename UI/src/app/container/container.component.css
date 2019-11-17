@@ -2,7 +2,6 @@
     padding-top:1vh;
     height: 10%;
     min-height: 50px; 
-    border-bottom: 1px solid chocolate;
     font-weight: bold;
 }
 
@@ -24,5 +23,7 @@
 
 input{
     width:calc(100% - 5px);
-    height: 3vh;
+    height: 2vw;
+    font-size: 2vw;
+    box-sizing: border-box;
 }

@@ -6,6 +6,7 @@ import { Item } from '../data-model/item';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { GenericDialogComponent } from '../generic-dialog/generic-dialog.component';
 import { ItemContextMenuOptionsEnum } from './item-context-menu/item-context-menu.component';
+import { timeout } from 'q';
 
 
 @Component({
@@ -31,6 +32,7 @@ export class ContainerComponent implements OnInit {
   showItemContextMenu=false;
   itemContextMenuPosition:{x:number,y:number}={x:0,y:0};
   availableContextMenuOption = [ItemContextMenuOptionsEnum.DELETE, ItemContextMenuOptionsEnum.EDIT];
+  private timer;
 
 
   constructor(private router:Router, private sessionSv:SessionService, public dialog: MatDialog, private renderer:Renderer2) {}
@@ -76,6 +78,16 @@ export class ContainerComponent implements OnInit {
     }
     this.onItemContextMenu.emit(item._id)
     return false;
+  }
+
+  onItemMouseDown(event,item:Item){
+    this.timer = setTimeout(()=>{
+      this.onItemRightClick(event,item)
+    },500)
+  }
+
+  onItemMouseUp(event,item:Item){
+    clearTimeout(this.timer)
   }
 
   onItemContextMenuOptionSelect(option:ItemContextMenuOptionsEnum){
