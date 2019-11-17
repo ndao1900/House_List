@@ -9,6 +9,7 @@ import { GenericDialogComponent } from '../generic-dialog/generic-dialog.compone
 import { HttpClient } from '@angular/common/http';
 import { EnvService } from '../services/env.service';
 import { Subscription } from 'rxjs';
+import { Location } from '@angular/common';
 
 
 
@@ -25,8 +26,8 @@ export class EditContainerComponent implements OnInit {
   addingItem:boolean;
   containerChanged = false;
 
-  constructor(private sessionSv:SessionService, private router:Router, public dialog: MatDialog,
-     private httpClient:HttpClient, private envSv:EnvService) { }
+  constructor(private sessionSv:SessionService, public router:Router, public dialog: MatDialog,
+     private httpClient:HttpClient, private envSv:EnvService, public locationSv:Location) { }
 
   ngOnInit() {
     this.subs.push(this.sessionSv.getSelectedContainer().subscribe((container:Container)=>{
@@ -128,5 +129,9 @@ export class EditContainerComponent implements OnInit {
     for(let sub of this.subs){
       sub.unsubscribe()
     }
+  }
+
+  onBackBtnClick(){
+    this.locationSv.back();
   }
 }

@@ -36,7 +36,7 @@ export class HomeComponent implements OnInit {
 
   onAddContainerClick(){
     const dialogRef = this.dialog.open(GenericDialogComponent, {
-      width: '30vw',
+      width: '80vw',
       data: {title:"Add New Container", value:new Container()}
     });
 
@@ -66,7 +66,7 @@ export class HomeComponent implements OnInit {
       }
       case ItemContextMenuOptionsEnum.EDIT:{
         const dialogRef = this.dialog.open(GenericDialogComponent, {
-          width: '30vw',
+          width: '80vw',
           data: {title:"Edit Container "+this.containerRightClicked.name, value:this.containerRightClicked}
         });
     
