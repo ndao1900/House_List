@@ -10,6 +10,10 @@
     min-height: 150px;
 }
 
+app-item{
+    -webkit-user-select: none;
+}
+
 .container{
     border: black 1px solid;
     width: 100%; 
@@ -23,7 +27,7 @@
 
 input{
     width:calc(100% - 5px);
-    height: 2vw;
+    height: minmax(20px,2vw);
     font-size: 2vw;
     box-sizing: border-box;
 }

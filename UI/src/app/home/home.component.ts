@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit {
   }
 
   onContainerRightClick(event,container){
-    this.itemContextMenuPosition = {x:event.x,y:event.y}
+    this.itemContextMenuPosition = {x:-10,y:event.y-10}
     this.showItemContextMenu = true;
     this.containerRightClicked = container;
     return false;

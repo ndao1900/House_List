@@ -33,6 +33,7 @@ export class ContainerComponent implements OnInit {
   itemContextMenuPosition:{x:number,y:number}={x:0,y:0};
   availableContextMenuOption = [ItemContextMenuOptionsEnum.DELETE, ItemContextMenuOptionsEnum.EDIT];
   private timer;
+  private ctxMnOutClick = 0;
 
 
   constructor(private router:Router, private sessionSv:SessionService, public dialog: MatDialog, private renderer:Renderer2) {}
@@ -51,9 +52,9 @@ export class ContainerComponent implements OnInit {
     this.onContainerClick.emit(this.container)
   }
 
-  onItemClick(event,itemIndex){
+  onItemClick(event,itemId){
     event.stopPropagation();
-    this.onItemSelect.emit(itemIndex)
+    this.onItemSelect.emit(itemId)
   }
 
   onAddClick(){
@@ -83,10 +84,17 @@ export class ContainerComponent implements OnInit {
   onItemMouseDown(event,item:Item){
     this.timer = setTimeout(()=>{
       this.onItemRightClick(event,item)
-    },500)
+    },1000)
   }
 
   onItemMouseUp(event,item:Item){
+    if(this.showItemContextMenu){
+      event.stopPropagation();
+    }
+    else{
+      this.onItemClick(event,item._id)
+    }
+
     clearTimeout(this.timer)
   }
 
@@ -113,5 +121,11 @@ export class ContainerComponent implements OnInit {
     }
   }
 
-  hideContextMenu(){this.showItemContextMenu = false}
+  hideContextMenu(){
+    if(this.ctxMnOutClick == 1){
+      this.showItemContextMenu = false
+      this.ctxMnOutClick = 0;
+    }
+    else this.ctxMnOutClick++;
+  }
 }
