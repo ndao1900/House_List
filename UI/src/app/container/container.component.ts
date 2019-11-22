@@ -20,12 +20,15 @@ export class ContainerComponent implements OnInit {
   @Input() editable;
   @Input() canAddNewItem=false;
   @Input() itemStyleMap:{[_id:number]:any}
+  @Input() selectedItems={};
+  @Input() availableActions={};
   @Output() onContainerClick = new EventEmitter<Container>();
   @Output() onItemSelect = new EventEmitter<any>();
   @Output() onItemContextMenu = new EventEmitter<any>();
-  @Output() onItemAdd = new EventEmitter<Item>();
-  @Output() onItemDel = new EventEmitter<Item>();
-  @Output() onItemEdit = new EventEmitter<Item>();
+  @Output() onItemAdd = new EventEmitter<{[id:number]:Item}>();
+  @Output() onItemDel = new EventEmitter<{[id:number]:Item}>();
+  @Output() onItemEdit = new EventEmitter<{[id:number]:Item}>();
+  @Output() onConfirm = new EventEmitter<any>();
   itemSearchTerm = "";
   
   itemRightClicked:Item = null;
@@ -34,6 +37,7 @@ export class ContainerComponent implements OnInit {
   availableContextMenuOption = [ItemContextMenuOptionsEnum.DELETE, ItemContextMenuOptionsEnum.EDIT];
   private timer;
   private ctxMnOutClick = 0;
+  ContainerActionsEnum = ContainerActionsEnum;
 
 
   constructor(private router:Router, private sessionSv:SessionService, public dialog: MatDialog, private renderer:Renderer2) {}
@@ -71,6 +75,18 @@ export class ContainerComponent implements OnInit {
     });
   }
 
+  onRemovedClick(){
+    this.onItemDel.emit(this.selectedItems)
+  }
+
+  onEditClick(){
+    //switch to edit mode - replace items rows with input fields
+  }
+
+  onConfirmClick(){
+    this.onConfirm.emit();
+  }
+
   onItemRightClick(event,item:Item){
     if(this.canAddNewItem){
       this.itemContextMenuPosition = {x:event.x,y:event.y}
@@ -102,7 +118,7 @@ export class ContainerComponent implements OnInit {
     this.showItemContextMenu = false;
     switch(option){
       case ItemContextMenuOptionsEnum.DELETE:{
-        this.onItemDel.emit(this.itemRightClicked)
+        this.onItemDel.emit({[this.itemRightClicked._id]:this.itemRightClicked})
         break;
       }
       case ItemContextMenuOptionsEnum.EDIT:{
@@ -128,4 +144,11 @@ export class ContainerComponent implements OnInit {
     }
     else this.ctxMnOutClick++;
   }
+}
+
+export enum ContainerActionsEnum{
+  REMOVE = "remove",
+  CONFIRM = "confirm",
+  ADD = 'add',
+  EDIT = 'edit'
 }

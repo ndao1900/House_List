@@ -25,6 +25,11 @@ app-item{
     background: rgb(250, 191, 81);
 }
 
+.selected-item, .selected-item:hover{
+    color: white;
+    background: rgb(245, 177, 50);
+}
+
 input{
     width:calc(100% - 5px);
     height: minmax(20px,2vw);

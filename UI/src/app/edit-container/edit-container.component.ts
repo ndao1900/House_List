@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { EnvService } from '../services/env.service';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
+import { ContainerActionsEnum } from '../container/container.component'
 
 
 
@@ -25,6 +26,11 @@ export class EditContainerComponent implements OnInit {
   itemStorage:Container;
   addingItem:boolean;
   containerChanged = false;
+  selectedItems = {};
+  selectedAvailableItems = {};
+  selectedStorageItems = {};
+  ContainerActionsEnum = ContainerActionsEnum;
+  storageItemActions = {[this.ContainerActionsEnum.CONFIRM]:1, [this.ContainerActionsEnum.ADD]:1}
 
   constructor(private sessionSv:SessionService, public router:Router, public dialog: MatDialog,
      private httpClient:HttpClient, private envSv:EnvService, public locationSv:Location) { }
@@ -43,23 +49,43 @@ export class EditContainerComponent implements OnInit {
     }))
   }
 
+  transferLeft(){
+    for(let id in this.selectedAvailableItems){
+      if(this.selectedContainer.items[id])
+        this.selectedContainer.items[id].quantity++
+      else
+        this.selectedContainer.items[id] = new Item(this.selectedContainer.availableItems[id])
+      this.updateItemsStyle("availItem");
+      this.containerChanged = true;
+    }
+  }
+
+  transferRight(){
+    for(let id in this.selectedItems){
+      let item = this.selectedContainer.items[id];
+      if(item.quantity == 1){
+        delete this.selectedContainer.items[id];
+        delete this.selectedItems[id]
+      }
+      else
+        item.quantity--;
+      this.updateItemsStyle("availItem");
+      this.containerChanged = true;
+    }
+  }
+
   onContainerItemSelect(_id){
-    let item = this.selectedContainer.items[_id];
-    if(item.quantity == 1)
-      delete this.selectedContainer.items[_id];
+    if(this.selectedItems[_id] == 1)
+      delete this.selectedItems[_id]
     else
-      item.quantity--;
-    this.updateItemsStyle("availItem");
-    this.containerChanged = true;
+      this.selectedItems[_id] = 1
   }
 
   onAvailableItemSelect(_id){
-    if(this.selectedContainer.items[_id])
-      this.selectedContainer.items[_id].quantity++
+    if(this.selectedAvailableItems[_id] == 1)
+      delete this.selectedAvailableItems[_id]
     else
-      this.selectedContainer.items[_id] = new Item(this.selectedContainer.availableItems[_id])
-    this.updateItemsStyle("availItem");
-    this.containerChanged = true;
+      this.selectedAvailableItems[_id] = 1
   }
 
   onAvailableItemContextMenu(_id){
@@ -92,12 +118,22 @@ export class EditContainerComponent implements OnInit {
   }
 
   onStorageItemSelect(_id){
-    if(!this.selectedContainer.availableItems[_id]){
-      this.selectedContainer.availableItems[_id] = Object.assign({},this.itemStorage.items[_id])
-      this.updateItemsStyle("");
-      this.addingItem = false;
-      this.containerChanged = true;
+    if(this.selectedStorageItems[_id] == 1)
+      delete this.selectedStorageItems[_id]
+    else
+      this.selectedStorageItems[_id] = 1
+  }
+
+  onAddAvailableItem(){
+    for(let _id in this.selectedStorageItems){
+      if(!this.selectedContainer.availableItems[_id]){
+        this.selectedContainer.availableItems[_id] = Object.assign({},this.itemStorage.items[_id])
+      }
     }
+    this.updateItemsStyle("");
+    this.addingItem = false;
+    this.containerChanged = true;
+    this.selectedStorageItems = {};
   }
 
   onBackDropClick(event){

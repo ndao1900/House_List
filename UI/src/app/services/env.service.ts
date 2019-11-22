@@ -13,7 +13,7 @@ export class EnvService {
       case "dev":
         return "http://localhost:8080";
       case "test":
-        return "https://f649dbc9.ngrok.io"
+        return "https://492ccc9e.ngrok.io"
     }
   }
 }
