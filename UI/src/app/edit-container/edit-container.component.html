@@ -12,9 +12,13 @@
   <div id="availItemDiv">
     <app-container [container]='{name:"Available Items",items:selectedContainer.availableItems}'
     [selectedItems]="selectedAvailableItems"
+    [availableActions]='availableItemActions'
+    [editable]="true"
+    [sortFunction]="utilSv.sortAvailItem"
     (onItemSelect)="onAvailableItemSelect($event)"
-    (onItemContextMenu)="onAvailableItemContextMenu($event)" 
-    [editable]="true" #availItems></app-container>
+    (onItemContextMenu)="onAvailableItemContextMenu($event)"
+    (onItemDel)="onAvailableItemRemove($event)"
+     #availItems></app-container>
   </div>
   <button mat-button (click)="onAddClick()">Add Available Item</button>
   <button mat-button [disabled]="!containerChanged" (click)="onSaveClick()">Save</button>

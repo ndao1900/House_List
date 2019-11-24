@@ -7,6 +7,7 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog
 import { GenericDialogComponent } from '../generic-dialog/generic-dialog.component';
 import { ItemContextMenuOptionsEnum } from './item-context-menu/item-context-menu.component';
 import { timeout } from 'q';
+import { UtilService } from '../services/util.service';
 
 
 @Component({
@@ -22,6 +23,7 @@ export class ContainerComponent implements OnInit {
   @Input() itemStyleMap:{[_id:number]:any}
   @Input() selectedItems={};
   @Input() availableActions={};
+  @Input() sortFunction:(a:Item,b:Item)=>number;
   @Output() onContainerClick = new EventEmitter<Container>();
   @Output() onItemSelect = new EventEmitter<any>();
   @Output() onItemContextMenu = new EventEmitter<any>();
@@ -40,16 +42,18 @@ export class ContainerComponent implements OnInit {
   ContainerActionsEnum = ContainerActionsEnum;
 
 
-  constructor(private router:Router, private sessionSv:SessionService, public dialog: MatDialog, private renderer:Renderer2) {}
+
+  constructor(private router:Router, private sessionSv:SessionService, public dialog: MatDialog, private renderer:Renderer2,
+    public utilSv:UtilService) {}
 
   ngOnInit() {
-    if(this.container == null && this.container == null){
-      this.container = new Container({
-        _id:0,
-        name:"bloob",
-        availableItems:{0:new Item({name:"bleep Bloob so long that it wraps around",_id:0}),1:new Item({name:"blaab",_id:1})}
-      } as Container);
-    }
+    // if(this.container == null && this.container == null){
+    //   this.container = new Container({
+    //     _id:0,
+    //     name:"bloob",
+    //     availableItems:{0:new Item({name:"bleep Bloob so long that it wraps around",_id:0}),1:new Item({name:"blaab",_id:1})}
+    //   } as Container);
+    // }
   }
 
   onClick(){
@@ -143,6 +147,16 @@ export class ContainerComponent implements OnInit {
       this.ctxMnOutClick = 0;
     }
     else this.ctxMnOutClick++;
+  }
+
+  getSortedItemArr(){
+    let arr = Object.values(this.container.items)
+    let sortFunct = this.sortFunction;
+    if(sortFunct) 
+      arr.sort(this.sortFunction)
+    else
+      arr.sort((a,b)=>{return a.quantity < b.quantity? -1:1})
+    return arr;
   }
 }
 

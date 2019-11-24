@@ -2,7 +2,8 @@
   <div class="containers-area">
       <ng-container *ngFor="let containerEntry of containerMap | keyvalue">
         <app-container (contextmenu)="onContainerRightClick($event,containerEntry.value)" 
-          (onContainerClick)="onContainerClick($event)" [container]="containerEntry.value" class="app-flex-item"></app-container>
+          (onContainerClick)="onContainerClick($event)" 
+          [container]="containerEntry.value.getReverse()" [sortFunction]="utilSv.sortAvailItem" class="app-flex-item"></app-container>
       </ng-container>
       <button mat-button (click)="onAddContainerClick()">Add Container</button> 
   </div> 

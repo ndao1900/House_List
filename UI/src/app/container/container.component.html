@@ -4,19 +4,22 @@
   </mat-card-header>
   <input mat-input [(ngModel)]="itemSearchTerm" placeholder="search..." (click)="$event.stopPropagation()"/>
   <mat-card-content>
-    <div [ngClass]="{'editable-item': editable, 'selected-item': selectedItems[itemObj.value._id]}" 
-    *ngFor="let itemObj of container.items | keyvalue">
-      <app-item *ngIf="itemObj.value.name.includes(itemSearchTerm.toLowerCase())" [item]="itemObj.value"
-        (contextmenu)="onItemRightClick($event,itemObj.value)"
-        (mousedown)="onItemMouseDown($event,itemObj.value)"
-        (mouseup)="onItemMouseUp($event,itemObj.value)"></app-item>
+    <div [ngClass]="{'editable-item': editable, 'selected-item': selectedItems[item._id]}" 
+    *ngFor="let item of getSortedItemArr()">
+      <app-item *ngIf="item.name.includes(itemSearchTerm.toLowerCase())" [item]="item"
+        (contextmenu)="onItemRightClick($event,item)"
+        (mousedown)="onItemMouseDown($event,item)"
+        (mouseup)="onItemMouseUp($event,item)"></app-item>
     </div>
   </mat-card-content>
   <mat-card-actions>
-    <button *ngIf="availableActions[ContainerActionsEnum.ADD]" mat-button (click)="onAddClick()">Add</button>
-    <button *ngIf="availableActions[ContainerActionsEnum.REMOVE]" mat-button (click)="onRemovedClick()">Remove</button>
-    <button *ngIf="availableActions[ContainerActionsEnum.EDIT]" mat-button (click)="onEditClick()">Edit</button>
     <button *ngIf="availableActions[ContainerActionsEnum.CONFIRM]" mat-button (click)="onConfirmClick()">Confirm</button>
+    <button *ngIf="availableActions[ContainerActionsEnum.REMOVE] && utilSv.getObjectKeys(selectedItems).length != 0" 
+      mat-button (click)="onRemovedClick()">Remove</button>
+  </mat-card-actions>
+  <mat-card-actions>
+    <button *ngIf="availableActions[ContainerActionsEnum.ADD]" mat-button (click)="onAddClick()">Add</button>
+    <button *ngIf="availableActions[ContainerActionsEnum.EDIT]" mat-button (click)="onEditClick()">Edit</button>
   </mat-card-actions>
 </mat-card>
 

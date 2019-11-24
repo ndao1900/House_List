@@ -77,23 +77,35 @@ exports.update = (req, res) => {
     });
 };
 
-exports.delete = (req, res) => {
-    Item.findByIdAndRemove(req.params.itemId)
-    .then(item => {
-        if(!item) {
-            return res.status(404).send({
-                message: "Item not found with id " + req.params.itemId
+exports.delete = ( req, res) => {
+    let idsToRemove = req.body.idsToRemove;
+    Item.deleteMany({_id:idsToRemove}, (err)=>{
+        if(err){
+            console.error(err);
+            return res.status(500).send({
+                message: "Could not delete item(s) with id " + idsToRemove.toString()
             });
+        }else{
+            res.send({message:"Delete successful"})
         }
-        res.send({message: "Item deleted successfully!"});
-    }).catch(err => {
-        if(err.kind === 'ObjectId' || err.name === 'NotFound') {
-            return res.status(404).send({
-                message: "Item not found with id " + req.params.itemId
-            });                
-        }
-        return res.status(500).send({
-            message: "Could not delete item with id " + req.params.itemId
-        });
-    });
+        
+    })
+    // Item.findByIdAndRemove(req.params.itemId)
+    // .then(item => {
+    //     if(!item) {
+    //         return res.status(404).send({
+    //             message: "Item not found with id " + req.params.itemId
+    //         });
+    //     }
+    //     res.send({message: "Item deleted successfully!"});
+    // }).catch(err => {
+    //     if(err.kind === 'ObjectId' || err.name === 'NotFound') {
+    //         return res.status(404).send({
+    //             message: "Item not found with id " + req.params.itemId
+    //         });                
+    //     }
+    //     return res.status(500).send({
+    //         message: "Could not delete item with id " + req.params.itemId
+    //     });
+    // });
 };

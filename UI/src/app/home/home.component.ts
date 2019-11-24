@@ -7,6 +7,8 @@ import { GenericDialogComponent } from '../generic-dialog/generic-dialog.compone
 import { HttpClient } from '@angular/common/http';
 import { EnvService } from '../services/env.service';
 import { ItemContextMenuOptionsEnum } from '../container/item-context-menu/item-context-menu.component';
+import { Item } from '../data-model/item';
+import { UtilService } from '../services/util.service';
 
 @Component({
   selector: 'app-home',
@@ -20,17 +22,27 @@ export class HomeComponent implements OnInit {
   itemContextMenuPosition = {x:0,y:0}
   containerRightClicked:Container;
   availableContextMenuOption = [ItemContextMenuOptionsEnum.DELETE,ItemContextMenuOptionsEnum.EDIT]
+  sortAvailItem(a:Item,b:Item){
+    if(a.style)
+      return Object.keys(a.style).length < Object.keys(b.style).length? 1:-1;
+    else
+      return 1;
+  }
 
   constructor(private sessionSv:SessionService, private router:Router,  public dialog: MatDialog, private httpClient:HttpClient,
-    private envSv:EnvService) { }
+    private envSv:EnvService, public utilSv:UtilService) { }
 
   ngOnInit() {
-    this.sessionSv.getContainerMap().subscribe(cMap=>{this.containerMap = cMap})
+    this.sessionSv.getContainerMap().subscribe(cMap=>{
+      for(let _id in cMap){
+        this.containerMap[_id] = new Container(cMap[_id])
+      }
+    })
     this.sessionSv.refreshContainers();
   }
 
   onContainerClick(container){
-    this.sessionSv.setSelectedContainer(container);
+    this.sessionSv.setSelectedContainer(this.containerMap[container._id]);
     this.router.navigate(['/EditContainer'])
   }
 
@@ -50,7 +62,7 @@ export class HomeComponent implements OnInit {
   }
 
   onContainerRightClick(event,container){
-    this.itemContextMenuPosition = {x:-10,y:event.y-10}
+    this.itemContextMenuPosition = {x:event.x,y:event.y}
     this.showItemContextMenu = true;
     this.containerRightClicked = container;
     return false;

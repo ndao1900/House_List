@@ -12,4 +12,11 @@ export class Container extends Thing{
         if(container)
             Object.assign(this,container)
     }
+
+    getReverse(){
+        let rev = new Container(this);
+        rev.items = JSON.parse(JSON.stringify(this.availableItems))
+        rev.availableItems = JSON.parse(JSON.stringify(this.items))
+        return rev;
+    }
 }

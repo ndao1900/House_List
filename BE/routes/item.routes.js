@@ -9,5 +9,5 @@ module.exports = (app) => {
 
     app.put('/items/:itemId', items.update);
 
-    app.delete('/items/:itemId', items.delete);
+    app.post('/RemoveItems', items.delete);
 }
