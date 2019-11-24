@@ -10,7 +10,7 @@ import { resolve } from 'url';
 export class SessionService {
 
   selectedContainer = new BehaviorSubject<Container>(new Container);
-  itemStorage = new BehaviorSubject<Container>({})
+  itemStorage = new BehaviorSubject<Container>(new Container({}))
   containerMap = new BehaviorSubject<any>({})
 
   constructor(private httpClient:HttpClient, private envSv:EnvService) { }

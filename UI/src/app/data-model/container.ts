@@ -5,7 +5,7 @@ export class Container extends Thing{
     availableItems?:{[_id:number]:Item}
     items?:{[_id:number]:Item}
 
-    constructor(container?:Container){
+    constructor(container?:any){
         super(container);
         this.availableItems = {}
         this.items = {}
