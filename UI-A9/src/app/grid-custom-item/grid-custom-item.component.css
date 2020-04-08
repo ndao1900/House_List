@@ -1,0 +1,25 @@
+.button-right{
+    position: absolute;
+    right: 0;
+}
+
+.container{
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.highlight{
+    border: 3px solid orange;
+}
+
+.drag-handler{
+    cursor: move;
+    top:0;
+    position: absolute;
+    width: 100%;
+    background: cornflowerblue;
+    height: 30px;
+}

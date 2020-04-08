@@ -1,0 +1,15 @@
+<mat-card class="container">
+    <mat-card-header class="container-hdr">
+        <mat-card-title>{{name}}</mat-card-title>
+    </mat-card-header>
+    <input mat-input [(ngModel)]="itemSearchTerm" placeholder="search..." (click)="$event.stopPropagation()"/>
+    <mat-card-content>
+        <div class='item' *ngFor="let item of items" [ngClass]="{'highlight':highlight[item.name]}">
+            <app-item (click)="onItemClick(item.name)" *ngIf="item.name.includes(itemSearchTerm.toLowerCase())" [item]="item"></app-item>
+        </div>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-button>EDIT ITEMS</button>
+        <button mat-button>EDIT LAYOUT</button>
+    </mat-card-actions>
+</mat-card>

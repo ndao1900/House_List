@@ -1,0 +1,16 @@
+<div *ngIf="editable">gridsize:
+    <input type="number" [(ngModel)]="layout.size[0]" (change)="changeGridCols($event.target.valueAsNumber)"/>
+    x
+    <input type="number" [(ngModel)]="layout.size[1]" (change)="changeGridRows($event.target.valueAsNumber)"/>
+</div>
+<div style="width: 80vh; height: 80vh;">
+    <gridster [options]="options">
+        <gridster-item *ngFor="let tile of layout.tiles; let i=index" [item]="tile" >
+            <app-grid-custom-item [isDragable]="options.draggable && options.draggable.enabled" 
+                [isHighlight]="highlight[tile.name]" [name]="tile.name" (click)="onItemSelected(i)"></app-grid-custom-item>
+        </gridster-item>
+    </gridster>
+</div>
+<div *ngIf="itemEditting && editable" id="EditGridItemPanel">
+    <app-edit-grid-item-panel  (onChoiceSelected)="pushItem($event)"></app-edit-grid-item-panel>
+</div>

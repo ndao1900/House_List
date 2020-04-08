@@ -1,0 +1,5 @@
+<div class='container'>
+    <app-edit-container-layout [layout]="container.layout" [highlight]="highlightContainers" [editable]="false"></app-edit-container-layout>
+    <app-items-list [highlight]="itemSelected.value" [name]="container.name" [items]="utilSv.getObjectValues(allItems)"
+        (onItemSelect)="onItemSelect($event)"></app-items-list>
+</div>
