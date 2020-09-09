@@ -5,23 +5,40 @@ import { Item } from '../data-model/item'
 import { HttpClient } from '@angular/common/http';
 import { EnvService } from './env.service';
 import { resolve } from 'url';
+import { FloatingPanelContentEnum } from '../enums/floating-panel-content'
+import { SERVICES } from '../interceptors/base-url-interceptor.service';
 
 @Injectable({providedIn:'root'})
 export class SessionService {
-
-  selectedContainer = new BehaviorSubject<Container>(new Container);
-  itemStorage = new BehaviorSubject<Container>(new Container({}))
+  user = new BehaviorSubject<any>({});
+  selectedContainer = new BehaviorSubject({});
+  itemHistory = new BehaviorSubject<{[id:number]:Item}>({});
   containerMap = new BehaviorSubject<any>({})
 
-  constructor(private httpClient:HttpClient, private envSv:EnvService) { }
+  showFloatingPanel = false;
+  fltPnlInput;
+  floatingPanelContent:FloatingPanelContentEnum;
+  floatPanContStyle = {
+    'position':'absolute',
+    'width':'50%',
+    'height':'80%',
+    'background':'white',
+    'top': '0',
+    'bottom': '0',
+    'right':'0',
+    'left': '0',
+    'margin': 'auto'
+  };
+
+  constructor(public httpClient:HttpClient, public envSv:EnvService) { }
 
   getSelectedContainer(){return this.selectedContainer.asObservable();}
 
   setSelectedContainer(container:Container){this.selectedContainer.next(container);}
 
-  getItemStorage(){return this.itemStorage.asObservable()}
+  getItemHistory(){return this.itemHistory.asObservable()}
 
-  setItemStorage(container:Container){this.itemStorage.next(container)}
+  setItemHistory(newItemStore){this.itemHistory.next(newItemStore)}
   
   getContainerMap(){return this.containerMap.asObservable()}
 
@@ -29,7 +46,7 @@ export class SessionService {
   
   async refreshItemStorage(){
     return new Promise(async resolve=>{
-      await this.httpClient.get(this.envSv.getBE_URL()+"/items")
+      await this.httpClient.get("/items", {headers: {service: SERVICES.BACKEND}})
       .toPromise().then((items:Array<any>)=>{
         let itemsMap = items.reduce((map,obj,index)=>{
           if(obj['_id'])
@@ -38,7 +55,7 @@ export class SessionService {
             console.error("Missing id in item: "+JSON.stringify(obj))
           return map;
         },{})
-        this.setItemStorage(new Container({name:'Item Storage',items:itemsMap}))
+        this.setItemHistory(new Container({name:'Item Storage',items:itemsMap}))
       })
       resolve(null)
     })
@@ -46,7 +63,7 @@ export class SessionService {
 
   async refreshContainers(){
     return new Promise(async resolve=>{
-      await this.httpClient.get(this.envSv.getBE_URL()+"/containers").toPromise()
+      await this.httpClient.get("/containers",{headers: {service: SERVICES.BACKEND}}).toPromise()
       .then((containers:Array<any>)=>{
         let newContainerMap = containers.reduce((map,obj,index)=>{
           if(obj['_id'])
@@ -59,5 +76,24 @@ export class SessionService {
       })
       resolve(null)
     })
+  }
+
+  async getUserData(){
+    return new Promise((resolve => {
+      this.httpClient.get("/users/5ef6d1817f11da1fa82f9b56", {headers: {service: SERVICES.BACKEND}}).subscribe(user => {
+        this.user.next({'_id': user['_id'], 'name':user['name']});
+        this.setContainerMap(user['containers'].reduce(
+          (acc, container) => {
+            return {...acc, [container.name]:new Container(container)}
+          },
+          {}
+        ));
+        this.setItemHistory(user['itemHistory'].reduce(
+          (acc, item) => ({...acc, [item._id]:item}),
+          {}
+        ))
+        resolve(null)
+      })
+    }))
   }
 }

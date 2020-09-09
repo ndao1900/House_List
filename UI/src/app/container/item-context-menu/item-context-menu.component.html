@@ -1,4 +1,0 @@
-<div class="item-context-menu" 
-    [ngStyle]="{'position':'fixed','left.px': position.x, 'top.px': position.y}">   
-    <div *ngFor="let option of availableOptions" (click)="onOptionSelect.emit(option)">{{option.toString().toUpperCase()}}</div>
-</div>

@@ -1,0 +1,12 @@
+<div class="app-fill">
+    <h3>{{input.title}}</h3>
+    <div *ngFor="let label of utilSv.getObjectKeys(toEdit)">
+        <div style="display:flex; justify-content: space-between;">{{label}}</div>
+    <input [type]="labelTypes[label]" [(ngModel)]="toEdit[label]"/>
+    </div>
+    <div style="display:flex; justify-content: space-between;">
+        <button (click)="handleAction('confirm')" >Confirm</button>
+        <button (click)="handleAction('cancle')" >Cancel</button>
+    </div>
+</div>
+

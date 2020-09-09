@@ -1,4 +1,7 @@
 const Container = require('../models/container.model.js');
+const { runInTransaction } = require('mongoose-transact-utils');
+const User = require('../models/user.model');
+const ContainerItemController = require('./container-item.controller');
 
 exports.create = (req, res) => {
     if(!req.body.name) {
@@ -7,20 +10,28 @@ exports.create = (req, res) => {
         });
     }
 
-    const container = new Container({
-        name: req.body.name, 
-        items: Object.assign({},req.body.items),
-        availableItems: Object.assign({},req.body.availableItems)        
-    });
+    const container = new Container(req.body);
 
-    container.save()
-            .then(data=>{res.send(data)})
-            .catch(err=>{ res.status(500).send({message: err.message || "Error when adding container"})})
+    const userId = req.params.userId;
+    if(userId){
+        runInTransaction(session => {
+            container.save()
+                .then(container => {
+                    User.update({_id: userId},{$push: {containers: container._id}})
+                        .then(() => { res.send(container) })
+                        .catch(() => session.abortTransaction())
+                })
+                .catch(err=>{ 
+                    res.status(500).send({message: err.message || "Error when adding container"});
+                    session.abortTransaction()
+                })
+        })
+    }
 };
 
 exports.findAll = (req, res) => {
     Container.find()
-            .then(containers=>{res.send(containers)})
+            .then( containers => res.send(containers))
             .catch(err=>{ res.status(500).send({message: err.message || "Error when getting all containers"})})
 };
 
@@ -56,7 +67,7 @@ exports.update = (req, res) => {
     Container.findByIdAndUpdate(req.params.containerId, {
         name: req.body.name, 
         items: Object.assign({},req.body.items),
-        availableItems: Object.assign({},req.body.availableItems) 
+        layout: req.body.layout
     }, {new: true})
     .then(container => {
         if(!container) {
@@ -96,4 +107,26 @@ exports.delete = (req, res) => {
             message: "Could not delete container with id " + req.params.containerId
         });
     });
+};
+
+exports.addItem = (req, res) => {
+    const {container} = req.body
+    runInTransaction(session => {
+        ContainerItemController.create(req,res,false)
+            .then(containerItem => {
+                if(containerItem._id){
+                    Container.findByIdAndUpdate(
+                        container,
+                        {$addToSet: {items: containerItem._id}}
+                    ).then(
+                        res.send(containerItem)
+                    )
+                }
+            })
+            .catch(err =>{
+                session.abortTransaction()
+                console.error(err);
+                res.status(500).send({message: "error adding ContainerItem"});
+            })
+    })
 };

@@ -1,2 +1,10 @@
-<app-container></app-container>
 <router-outlet></router-outlet>
+
+<div (click)="handleBackDropClick($event)" *ngIf="sessionSv.showFloatingPanel" id="FloatingPanelBackDrop">
+    <div id="FPContainer" [ngStyle]="sessionSv.floatPanContStyle">
+        <app-item-lookup *ngIf="sessionSv.floatingPanelContent === FloatingPanelContentEnum.ITEM_LOOKUP"></app-item-lookup>
+        <app-generic-input-panel *ngIf="sessionSv.floatingPanelContent == FloatingPanelContentEnum.GENERIC_INPUT_PANEL"
+            [input]="sessionSv.fltPnlInput">
+        </app-generic-input-panel>
+    </div>
+</div>

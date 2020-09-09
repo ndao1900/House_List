@@ -1,0 +1,15 @@
+<div class="app-fill">
+    <h3 style="text-align: center;">Item Lookup</h3>
+    <div>
+        <input style="width: 99%;" type="text" [(ngModel)]="lookupText" />
+        <div style="padding: 0px 20px;">
+            <ng-container *ngFor="let itemId of utilSv.getObjectKeys(itemStore)">
+                <div class="hoverable clickable" (click)="handleItemClick(itemStore[itemId])" 
+                    *ngIf="itemStore[itemId].name.includes(lookupText)">
+                    {{itemStore[itemId].name}}
+                </div>
+            </ng-container>
+        </div>
+    </div>
+    <button (click)="handleAddItem()">Add Item</button>
+</div>

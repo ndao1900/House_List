@@ -1,0 +1,33 @@
+<div>
+    <div>
+        <app-item-list-entry-row 
+            [itemName]="item.name" 
+            [containerName]="!expand['container']? getContainerNames():''" 
+            [canExpand]="canExpand(item.quantityMap)"
+            [quantity]="getTotal(item.quantityMap)"
+            [canInteract]="false"
+            [daysLeft]="getDaysLeftFromQuantityMap(item.quantityMap).join(', ')"  
+            (onExpand)="onExpandClick('container')"
+        ></app-item-list-entry-row>
+        <ng-container *ngIf="expand['container']">
+            <ng-container *ngFor="let containerEntry of item.quantityMap | keyvalue">
+                <app-item-list-entry-row 
+                    [containerName]="containerEntry.value.name" 
+                    [canExpand]="canExpand(containerEntry.value.quantityMap)"
+                    [quantity]="getTotal(containerEntry.value.quantityMap)"
+                    [canInteract]="true"
+                    [daysLeft]="getDaysLeftFromQuantityMap(containerEntry.value.quantityMap).join(', ')"  
+                    (onExpand)="onExpandClick('createdDate')"
+                ></app-item-list-entry-row>
+                <ng-container *ngIf="expand['createdDate']">
+                    <app-item-list-entry-row *ngFor="let createdDateEntry of containerEntry.value.quantityMap | keyvalue; let i = index"
+                        [quantity]="createdDateEntry.value.quantity"
+                        [canInteract]="true"
+                        [daysLeft]="utilSv.getDaysLeft(createdDateEntry.key, item.lifetime)"  
+                    ></app-item-list-entry-row>
+                </ng-container>
+            </ng-container>
+        </ng-container>
+    </div>
+</div>
+

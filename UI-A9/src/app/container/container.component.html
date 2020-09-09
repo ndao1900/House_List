@@ -1,5 +1,19 @@
-<div class='container'>
-    <app-edit-container-layout [layout]="container.layout" [highlight]="highlightContainers" [editable]="false"></app-edit-container-layout>
-    <app-items-list [highlight]="itemSelected.value" [name]="container.name" [items]="utilSv.getObjectValues(allItems)"
-        (onItemSelect)="onItemSelect($event)"></app-items-list>
+<div *ngIf="mainContainer" class='container'>
+    <app-edit-container-layout [layout]="mainContainer.layout" [fromContainer] = "mainContainer.id"
+        [highlight]="getHighlightedContainers()" [editable]="isEdittingLayout" 
+        (onContainerSelected)="onContainerSelected($event)" (onGridClicked)="onGridClicked()"
+    ></app-edit-container-layout>
+    <div style = "width: 50vw;" *ngIf="!isEdittingLayout">
+        <app-items-list 
+            [highlight]="containerHighlightSelected"
+            [itemsMap]="selectedContainer.itemsMap"
+            (onItemSelect)="handleItemSelect($event)" 
+            (onItemHover)="handleItemHover($event)" 
+            (onEditLayout)="isEdittingLayout = !isEdittingLayout"
+            (onAddItem)="onAddItem()"
+            (onAddQuantity)="handleAddQuantity($event)"
+        >
+        </app-items-list>
+    </div>
+    
 </div>

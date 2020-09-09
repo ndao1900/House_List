@@ -27,6 +27,8 @@ app.use(cors(corsOptions));
 var port = 8080;
 require('./routes/item.routes.js')(app);
 require('./routes/container.routes.js')(app);
+require('./routes/user.routes.js')(app);
+require('./routes/container-item.routes.js')(app);
 app.listen(port, ()=>{console.log('Server started on port '+port.toString())})
 
 mongoose.connect(MONGO_URL,)

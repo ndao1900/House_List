@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class EnvService {
 
-  env = 'test'
+  env = 'dev'
   constructor() { }
 
   getBE_URL(){

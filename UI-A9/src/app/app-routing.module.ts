@@ -1,10 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { EditContainerLayoutComponent } from './edit-container-layout/edit-container-layout.component';
+
+import { ContainerComponent } from './container/container.component';
+import { HomeComponent } from './home/home.component';
 
 
 const routes: Routes = [
-  { path: 'EditContainerLayout', component:EditContainerLayoutComponent}
+  { path: 'container/:id', component:ContainerComponent},
+  { path: '', component:HomeComponent}
 ];
 
 @NgModule({

@@ -1,21 +1,27 @@
 const Item = require('../models/item.model.js');
 
-exports.create = (req, res) => {
-    if(!req.body.name) {
-        return res.status(400).send({
-            message: "Item name can not be empty"
-        });
-    }
-
-    const item = new Item({
-        name: req.body.name, 
-        price: req.body.price || 0,
-        unit: req.body.unit || ""        
+exports.create = (req, res, isReturningResponse = true) => {
+    return new Promise((resolve, reject) => {
+        if(!req.body.name) {
+            return res.status(400).send({
+                message: "Item name can not be empty"
+            });
+        }
+    
+        const item = new Item(req.body);
+    
+        item.save()
+            .then(data=>{
+                if(isReturningResponse)
+                    res.send(data)
+                resolve(data);
+            })
+            .catch(err=>{
+                if(isReturningResponse)
+                    res.status(500).send({message: err.message || "Error when adding item"})
+                reject(err)
+            })
     });
-
-    item.save()
-            .then(data=>{res.send(data)})
-            .catch(err=>{ res.status(500).send({message: err.message || "Error when adding item"})})
 };
 
 exports.findAll = (req, res) => {
@@ -53,11 +59,7 @@ exports.update = (req, res) => {
     }
 
     // Find item and update it with the request body
-    Item.findByIdAndUpdate(req.params.itemId, {
-        name: req.body.name, 
-        price: req.body.price || 0,
-        unit: req.body.price || ""
-    }, {new: true})
+    Item.findByIdAndUpdate(req.params.itemId, req.body, {new: true})
     .then(item => {
         if(!item) {
             return res.status(404).send({

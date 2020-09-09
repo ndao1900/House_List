@@ -1,0 +1,22 @@
+<div [ngClass]="{'item-list-entry':true}">
+    <div *ngIf="canExpand"
+        [ngStyle]="{'grid-area':'1/1/span 1/span 1','text-align':'center'}" class="clickable" 
+        (click)="handleExpand()"
+    > 
+        {{expanded? 'v':'>'}}
+    </div>
+    <div [ngStyle]="{'grid-area':'1/2/span 1/span 1'}">{{itemName}}</div>
+    <div [ngStyle]="{'grid-area':'1/3/span 1/span 1','text-align':'center','display':'flex','justify-content':'space-around'}" >
+        <div *ngIf="canInteract" class="clickable" style="color:red" 
+            (click)="onRemove.emit()"
+        > - </div>
+        {{quantity > 1? 'x'+quantity:''}}
+        <div *ngIf="canInteract" class="clickable" style="color:green"
+            (click)="onAdd.emit()"
+        > + </div>
+    </div>
+    <div [ngStyle]="{'grid-area':'1/4/span 1/span 1','text-align':'center'}">
+        {{containerName}}
+    </div>
+    <div [ngStyle]="{'grid-area':'1/5/span 1/span 1','text-align':'center'}">{{daysLeft}}</div>
+</div>

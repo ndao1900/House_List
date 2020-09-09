@@ -3,12 +3,15 @@
     x
     <input type="number" [(ngModel)]="layout.size[1]" (change)="changeGridRows($event.target.valueAsNumber)"/>
 </div>
-<div style="width: 80vh; height: 80vh;">
+<div [ngClass]="{'highlight':highlight[fromContainer]}" style="width: 80vh; height: 80vh;" (click)="onGridClick($event)">
     <gridster [options]="options">
-        <gridster-item *ngFor="let tile of layout.tiles; let i=index" [item]="tile" >
-            <app-grid-custom-item [isDragable]="options.draggable && options.draggable.enabled" 
-                [isHighlight]="highlight[tile.name]" [name]="tile.name" (click)="onItemSelected(i)"></app-grid-custom-item>
-        </gridster-item>
+        <ng-container *ngIf="layout.tiles">
+            <gridster-item *ngFor="let tile of layout.tiles; let i=index" [item]="tile">
+                <app-grid-custom-item [isDragable]="options.draggable && options.draggable.enabled" 
+                    [isHighlight]="highlight[tile.id]" [name]="tile.name" [isSelected]="selected[tile.id]"
+                    (click)="onItemSelected(i,$event)"></app-grid-custom-item>
+            </gridster-item>
+        </ng-container>
     </gridster>
 </div>
 <div *ngIf="itemEditting && editable" id="EditGridItemPanel">

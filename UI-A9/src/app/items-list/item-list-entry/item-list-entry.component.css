@@ -1,0 +1,12 @@
+.hoverable:hover{
+    background: rgb(248, 222, 175);
+}
+
+.highlight{
+    background: orange;
+}
+
+.highlight:hover{
+    background: rgb(252, 194, 87);
+}
+

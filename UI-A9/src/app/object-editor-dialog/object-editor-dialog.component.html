@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>{{data.title}}</h1>
+<div mat-dialog-content class="dialog-content">
+    <div *ngFor="let valueObj of data.value | keyvalue; trackBy:trackByFn" >
+        <p style="font-weight: bold;">{{!!valueObj.value.formLabel? valueObj.value.formLabel:valueObj.key}}</p>
+        <div>
+          <input [disabled]="valueObj.key == '_id'" matInput [(ngModel)]="data.value[valueObj.key].value">
+          <p style="color: red;" *ngIf="!!valueObj.value.error">{{valueObj.value.error}}</p>
+        </div> 
+    </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancelClick()">Cancel</button>
+  <button mat-button (click)="handleConfirm()" cdkFocusInitial>Confirm</button>
+</div>

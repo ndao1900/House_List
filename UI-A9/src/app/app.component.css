@@ -1,0 +1,56 @@
+.clickable{
+    cursor: pointer;
+}
+
+.hoverable:hover{
+    background: rgba(255, 166, 0, 0.486);
+}
+
+.flex-space-between{
+    display: flex;
+    justify-content: space-between;
+}
+
+.highlight{
+    background: orange;
+}
+
+.app-fill{
+    height: 100%;
+}
+
+.app-confirm-button{
+    background: rgb(76, 197, 92);
+    color:white;
+}
+
+#FloatingPannel{
+    top: 0;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.226);
+    z-index: 99;
+}
+
+#FloatingPanelBackDrop{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.377);
+}
+
+.item-list-entry {
+    display: grid;
+    grid-template-columns: 10px auto 100px 40% 100px;
+}
+
+.item-list-entry > * {
+    text-align: center;
+}
+
+.whole-item-list-entry-row{
+    grid-column: 1 / span 5;
+}

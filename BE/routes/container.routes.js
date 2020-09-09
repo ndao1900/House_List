@@ -1,7 +1,9 @@
 module.exports = (app) => {
     const containers = require('../controllers/container.controller.js');
 
-    app.post('/containers', containers.create);
+    app.post('/containers/addItem', containers.addItem)
+
+    app.post('/containers/:userId', containers.create);
 
     app.get('/containers', containers.findAll);
 
@@ -10,4 +12,5 @@ module.exports = (app) => {
     app.put('/containers/:containerId', containers.update);
 
     app.delete('/containers/:containerId', containers.delete);
+
 }

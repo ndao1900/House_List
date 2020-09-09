@@ -12,7 +12,13 @@
 }
 
 .highlight{
+    height: 98%;
     border: 3px solid orange;
+}
+
+.selected{
+    height: 98%;
+    border: 3px solid rgb(76, 64, 238);
 }
 
 .drag-handler{

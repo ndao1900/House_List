@@ -2,6 +2,7 @@
     background:orange;
 }
 
-.item:hover{
-    background: rgb(241, 214, 164);
+.item{
+    display: grid;
+    grid-template-columns: 10px auto 20px 40% 50px 100px;
 }
