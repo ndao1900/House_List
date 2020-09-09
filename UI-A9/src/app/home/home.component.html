@@ -1,4 +1,4 @@
-<div>
+<div [ngClass]="['container', 'container-names-container']">
     <ng-container *ngFor='let entry of containerMap | keyvalue'>
         <a [routerLink]="['container/', entry.value.name]">{{entry.value.name}}</a>
     </ng-container>

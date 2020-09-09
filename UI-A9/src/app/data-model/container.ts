@@ -8,7 +8,7 @@ export class Container{
     itemsMap
 
     constructor(container?){
-        Object.assign(this,container);
+        Object.assign(this, container);
         this.itemsMap = this.addToItemMap({},container)
         if(!!container.layout){
             if(!!container.layout.tiles){
