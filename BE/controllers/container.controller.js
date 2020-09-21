@@ -3,6 +3,28 @@ const { runInTransaction } = require('mongoose-transact-utils');
 const User = require('../models/user.model');
 const ContainerItemController = require('./container-item.controller');
 
+exports.checkContainerOwnership = (req,res,next) => {
+    if(!!req.query.userId && !!req.params.containerId){
+        User.findOne(
+            {
+                _id: req.query.userId,
+                containers: req.params.containerId
+            }
+        )
+        .then(user => {
+            if(!!user)
+                next()
+            else{
+                res.status(500).send({message: `Container doesn't belong to user`})
+            }
+        })
+        .catch(e => { res.status(500).send({message: e}) })
+    }
+    else{
+        res.status(400).send();
+    }
+}
+
 exports.create = (req, res) => {
     if(!req.body.name) {
         return res.status(400).send({
@@ -31,12 +53,13 @@ exports.create = (req, res) => {
 
 exports.findAll = (req, res) => {
     Container.find()
-            .then( containers => res.send(containers))
-            .catch(err=>{ res.status(500).send({message: err.message || "Error when getting all containers"})})
+        .then( containers => res.send(containers))
+        .catch(err=>{ res.status(500).send({message: err.message || "Error when getting all containers"})})
 };
 
 exports.findOne = (req, res) => {
     Container.findById(req.params.containerId)
+    .populate({path: 'containerItems', populate:{path:'item'}})
     .then(container => {
         if(!container) {
             return res.status(404).send({
@@ -110,17 +133,20 @@ exports.delete = (req, res) => {
 };
 
 exports.addItem = (req, res) => {
-    const {container} = req.body
+    const containerId = req.params.containerId;
+    req.body.container = containerId;
     runInTransaction(session => {
         ContainerItemController.create(req,res,false)
             .then(containerItem => {
                 if(containerItem._id){
                     Container.findByIdAndUpdate(
-                        container,
-                        {$addToSet: {items: containerItem._id}}
-                    ).then(
-                        res.send(containerItem)
-                    )
+                        containerId,
+                        {$addToSet: {containerItems: containerItem._id}}
+                    ).then( data => res.send(containerItem) )
+                    .catch( e => {
+                        console.error(e);
+                        res.status(500).send({message: `error adding containerItems`})            
+                    })
                 }
             })
             .catch(err =>{
@@ -129,4 +155,4 @@ exports.addItem = (req, res) => {
                 res.status(500).send({message: "error adding ContainerItem"});
             })
     })
-};
+}

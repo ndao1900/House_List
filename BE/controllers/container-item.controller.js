@@ -25,7 +25,7 @@ exports.update = (req, res) => {
                 message: "ContainerItem not found with id " + req.params.containerItemId
             });
         }
-        res.send(containerItem );
+        res.send(containerItem);
     }).catch(err => {
         if(err.kind === 'ObjectId') {
             return res.status(404).send({

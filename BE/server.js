@@ -21,10 +21,13 @@ var corsOptions = {
     credentials:true
 }
 var app = express();
+var port = 8080;
+
 app.use(body_parser.urlencoded({extended:true}))
 app.use(body_parser.json());
 app.use(cors(corsOptions));
-var port = 8080;
+
+
 require('./routes/item.routes.js')(app);
 require('./routes/container.routes.js')(app);
 require('./routes/user.routes.js')(app);

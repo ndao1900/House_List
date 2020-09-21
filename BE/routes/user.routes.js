@@ -11,9 +11,7 @@ module.exports = (app) => {
 
     app.post('/RemoveUsers', users.delete);
     
-    app.put('/users/:userId/addItemHistory/:itemId', users.addItemHistory);
-
-    app.put('/users/:userId/addItemHistory/', users.addItemHistoryNewItem);
+    app.post('/users/addItemHistory/', users.addItemHistory);
 
     app.put('/users/:userId/removeItemHistory/:itemId', users.removeItemHistory);
 

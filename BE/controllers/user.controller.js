@@ -29,7 +29,7 @@ exports.findAll = (req, res) => {
 
 exports.findOne = (req, res) => {
     User.findById(req.params.userId)
-    .populate({path: 'containers', populate: {path: 'items', populate:{path:'item'}}})
+    .populate({path: 'containers', populate: {path: 'containerItems', populate:{path:'item'}}})
     .populate('itemHistory')
     .then(user => {
         if(!user) {
@@ -96,29 +96,26 @@ exports.delete = ( req, res) => {
 };
 
 exports.addItemHistory = ( req, res) => {
-    let itemToAdd = req.params.itemId;
-    let userId = req.params.userId;
-    Item.findById(itemToAdd).then( (item) => {
-        if(item){
-            return addItemIdToHistory(userId, itemToAdd, res);
-        }
-        else{
-            return res.status(404).send({message: "Unknown item"});
-        }
-    }).catch( err => { 
-        return res.status(500).send({
-            message: "Error updating user with id " + req.params.userId
-        });
-    })
-};
-
-exports.addItemHistoryNewItem = (req, res) => {
-    ItemController.create(req, res)
-        .then(item => {
-            addItemIdToHistory(req.params.userId, item._id, res);
+    let itemToAdd = req.body;
+    let userId = req.query.userId;
+    Item.findOne(itemToAdd)
+        .then( (item) => {
+            if(item){
+                return addItemIdToHistory(userId, item._id, res);
+            }
+            else{
+                ItemController.create(req, res, false)
+                .then(item => {
+                    addItemIdToHistory(req.params.userId, item._id, res);
+                })
+                .catch(err => res.status(500).send({message: "Can't create item: " + JSON.stringify(req.body)}))
+            }
+        }).catch( err => { 
+            return res.status(500).send({
+                message: "Error adding item itemId" + req.params.userId
+            });
         })
-        .catch(err => res.status(500).send({message: "Can't create item: " + JSON.stringify(req.body)}))
-}
+};
 
 exports.removeItemHistory = ( req, res) => {
     let itemToRemove = req.params.itemId;
@@ -162,7 +159,7 @@ addItemIdToHistory = (userId, itemId, res, isReturningResponse = true) => {
         .then(user => {
             if(!user) {
                 if(isReturningResponse)
-                    res.status(500).send({message: "Could not add item to storage"});
+                    res.status(500).send({message: "User not found"});
                 resolve(user);
             }
             res.send(user);
