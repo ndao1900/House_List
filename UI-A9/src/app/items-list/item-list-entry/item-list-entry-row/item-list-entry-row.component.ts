@@ -13,6 +13,9 @@ export class ItemListEntryRowComponent implements OnInit {
   @Input() canInteract?:boolean = false;
   @Input() containerName?:string;
   @Input() daysLeft?:number;
+  @Input() gridStyle={}
+  @Input() displayColumns = []
+
   @Output() onExpand = new EventEmitter();
   @Output() onQtyChange = new EventEmitter();
 

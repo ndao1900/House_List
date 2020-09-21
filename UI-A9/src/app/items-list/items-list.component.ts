@@ -1,9 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { UtilService } from '../services/util.service';
 import { SessionService } from '../services/session.service';
-import { FloatingPanelContentEnum } from '../enums/floating-panel-content'
 import { ItemLookupService } from '../services/item-lookup.service';
-import { Item } from '../data-model/item';
+import { Container } from '../data-model/container';
 
 @Component({
   selector: 'app-items-list',
@@ -11,12 +10,18 @@ import { Item } from '../data-model/item';
   styleUrls: ['./items-list.component.css', '../app.component.css']
 })
 export class ItemsListComponent implements OnInit {
-  FloatingPanelContentEnum = FloatingPanelContentEnum
-  
+  COLUMNS = {
+    ITEM: {gridCol: 'minmax(100px, 150px)', header: "Item"},
+    QUANTITY: {gridCol: '100px', header: "Qty", style:{"text-align":"center"}},
+    CONTAINER: {gridCol: 'minmax(100px, 150px)', header: "Container", style:{"text-align":"center"}},
+    DAYS_LEFT: {gridCol: '100px', header: "Days Left"}
+  }
+
   itemSearchTerm = "";
-  @Input() itemsMap = {};
-  @Input() containerName = "";
+  @Input() container:Container;
   @Input() highlight = {};
+  @Input() readOnly = false;
+  @Input() displayColumns = []
   @Output() onItemSelect = new EventEmitter<any>();
   @Output() onEditLayout = new EventEmitter<any>();
   @Output() onAddItem = new EventEmitter<any>();
@@ -24,7 +29,11 @@ export class ItemsListComponent implements OnInit {
 
   getItemQty = false;
   
-  constructor(public utilSv:UtilService, public sessionSv:SessionService, private itemLkpSv:ItemLookupService ) { }
+  constructor(public utilSv:UtilService, public sessionSv:SessionService, private itemLkpSv:ItemLookupService ) {
+    if(this.displayColumns.length === 0){
+      this.displayColumns = Object.keys(this.COLUMNS)
+    }
+   }
 
   ngOnInit(): void {
   }
@@ -41,8 +50,21 @@ export class ItemsListComponent implements OnInit {
     this.onEditLayout.emit();
   }
 
-  handleQtyChange(quantityChange){
+  handleQtyChange(quantityChange:{containerId:string, itemId:string, containerItemId:string, amount:number}){
     this.onQuantityChange.emit(quantityChange,);
+  }
+
+  getGridLayout(){
+    let gridStyle = {
+      display: 'grid',
+      gridTemplateColumns: "10px" 
+    }
+
+    this.displayColumns.forEach(col => {
+      gridStyle.gridTemplateColumns += ` ${this.COLUMNS[col].gridCol}`
+    })
+
+    return gridStyle;
   }
 
 }

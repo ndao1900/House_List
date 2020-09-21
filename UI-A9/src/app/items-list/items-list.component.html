@@ -1,22 +1,23 @@
 <mat-card>
     <mat-card-header>
-        <mat-card-title>{{containerName}}</mat-card-title>
+        <mat-card-title>{{container.name}}</mat-card-title>
     </mat-card-header>
     <input mat-input [(ngModel)]="itemSearchTerm" placeholder="search..." (click)="$event.stopPropagation()"/>
     <mat-card-content>
-        <div class='item-list-entry'>
+        <div [ngStyle]="getGridLayout()" >
             <div></div>
-            <div>Item Name</div>
-            <div>Qty</div>
-            <div style="text-align: center;">Container</div>
-            <div style="text-align: center;">Days Left</div>
+            <ng-container *ngFor="let col of displayColumns">
+                <div [ngStyle]="COLUMNS[col].style">{{COLUMNS[col].header}}</div>
+            </ng-container>
         </div>
-        <div *ngFor="let id of utilSv.getObjectKeys(itemsMap)">
+        <div *ngFor="let id of utilSv.getObjectKeys(container.itemsMap)">
             <app-item-list-entry 
-                [highlight]="highlight" [item]="itemsMap[id]"
+                [highlight]="highlight" [item]="container.itemsMap[id]"
+                [gridStyle]="getGridLayout()"
+                [displayColumns]="displayColumns"
                 (onItemSelect)="handleItemSelected($event)"
                 (onChangeQty)="handleQtyChange($event)"
-                *ngIf="itemsMap[id].name.includes(itemSearchTerm.toLowerCase())">
+                *ngIf="container.itemsMap[id].name.includes(itemSearchTerm.toLowerCase())">
             </app-item-list-entry>
         </div>
     </mat-card-content>

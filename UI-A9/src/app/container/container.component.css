@@ -1,9 +1,14 @@
 .container{
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     align-items: center;
 }
 
 .highlight{
     border: 5px solid orange
+}
+
+.itemList{
+    width: 30vw;
+    max-width: 500px;
 }

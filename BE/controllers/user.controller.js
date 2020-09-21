@@ -1,6 +1,8 @@
 const User = require('../models/user.model.js');
 const Item = require('../models/item.model.js');
 const ItemController = require('../controllers/item.controller');
+const { runInTransaction } = require('mongoose-transact-utils');
+
 
 exports.create = (req, res) => {
     if(!req.body.name) {
@@ -98,23 +100,36 @@ exports.delete = ( req, res) => {
 exports.addItemHistory = ( req, res) => {
     let itemToAdd = req.body;
     let userId = req.query.userId;
-    Item.findOne(itemToAdd)
+
+    runInTransaction(session => {
+        let errHandler = ((err,message) =>{
+            session.abortTransaction()
+            console.error(err);
+            res.status(500).send({message: message});
+        })
+
+        Item.findOne(itemToAdd)
         .then( (item) => {
             if(item){
-                return addItemIdToHistory(userId, item._id, res);
+                addItemIdToHistory(userId, item._id, res)
+                    .then(()=>{res.send(item)})
+                    .catch(e => errHandler(e, "Can't add item history"));
             }
             else{
                 ItemController.create(req, res, false)
                 .then(item => {
-                    addItemIdToHistory(req.params.userId, item._id, res);
+                    addItemIdToHistory(userId, item._id, res)
+                        .then(()=>{res.send(item)})
+                        .catch(e => errHandler(e, "Can't add item history"));
                 })
-                .catch(err => res.status(500).send({message: "Can't create item: " + JSON.stringify(req.body)}))
+                .catch(e => errHandler(e, `Can't create item: ${JSON.stringify(req.body)}`));
             }
         }).catch( err => { 
             return res.status(500).send({
                 message: "Error adding item itemId" + req.params.userId
             });
         })
+    })
 };
 
 exports.removeItemHistory = ( req, res) => {
@@ -150,7 +165,7 @@ exports.removeItemHistory = ( req, res) => {
     }
 };
 
-addItemIdToHistory = (userId, itemId, res, isReturningResponse = true) => {
+addItemIdToHistory = (userId, itemId) => {
     return new Promise((resolve, reject) => {
         User.findByIdAndUpdate(
             userId, 
@@ -158,15 +173,12 @@ addItemIdToHistory = (userId, itemId, res, isReturningResponse = true) => {
             {new: true})
         .then(user => {
             if(!user) {
-                if(isReturningResponse)
-                    res.status(500).send({message: "User not found"});
+                reject("User not found")
+            }else{
                 resolve(user);
             }
-            res.send(user);
         }).catch(err => {
             console.error(err);
-            if(isReturningResponse)
-                res.status(500).send({message: "Could not add item to storage"});  
             reject(err);              
         });
     })

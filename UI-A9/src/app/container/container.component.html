@@ -3,10 +3,10 @@
         [highlight]="getHighlightedContainers()" [editable]="isEdittingLayout" 
         (onContainerSelected)="onContainerSelected($event)" (onGridClicked)="onGridClicked()"
     ></app-edit-container-layout>
-    <div style = "width: 50vw;" *ngIf="!isEdittingLayout">
+    <div class="itemList" *ngIf="!isEdittingLayout">
         <app-items-list 
             [highlight]="containerHighlightSelected"
-            [itemsMap]="selectedContainer.itemsMap"
+            [container]="selectedContainer"
             (onItemSelect)="handleItemSelect($event)" 
             (onItemHover)="handleItemHover($event)" 
             (onEditLayout)="isEdittingLayout = !isEdittingLayout"

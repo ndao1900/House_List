@@ -12,6 +12,8 @@ export class ItemListEntryComponent implements OnInit {
 
   @Input() item:any = {}
   @Input() highlight = {}
+  @Input() gridStyle = {};
+  @Input() displayColumns = [];
   @Output() onItemSelect = new EventEmitter<{[id:number]:{[containerId:string]:boolean}}>();
   @Output() onItemHover = new EventEmitter<{[id:number]:{[containerId:string]:boolean}}>();
   @Output() onChangeQty = new EventEmitter<{containerItemId:string, newQuantity:number}>();
