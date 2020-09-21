@@ -15,7 +15,7 @@
             <app-item-list-entry 
                 [highlight]="highlight" [item]="itemsMap[id]"
                 (onItemSelect)="handleItemSelected($event)"
-                (onAddQty)="handleAddQty($event)"
+                (onChangeQty)="handleQtyChange($event)"
                 *ngIf="itemsMap[id].name.includes(itemSearchTerm.toLowerCase())">
             </app-item-list-entry>
         </div>

@@ -9,6 +9,8 @@ import { ItemLookupService } from '../services/item-lookup.service';
 import { HttpClient } from '@angular/common/http';
 import { SERVICES } from '../interceptors/base-url-interceptor.service'
 import { Container } from '../data-model/container';
+import { ItemLookupComponent } from '../item-lookup/item-lookup.component';
+import { ApiService } from '../services/api.service';
 
 
 @Component({
@@ -17,8 +19,6 @@ import { Container } from '../data-model/container';
   styleUrls: ['./container.component.css']
 })
 export class ContainerComponent implements OnInit {
-  FloatingPanelContentEnum = FloatingPanelContentEnum
-
   @Input() mainContainer
 
   selectedContainer:Container;
@@ -32,7 +32,8 @@ export class ContainerComponent implements OnInit {
   itemToAdd;
 
   constructor(public utilSv:UtilService, public activatedRoute:ActivatedRoute, public sessionSv:SessionService,
-    private dialog:MatDialog, private itemLkpSv:ItemLookupService, public httpClient:HttpClient) {
+    private dialog:MatDialog, private itemLkpSv:ItemLookupService, public httpClient:HttpClient,
+    private apiSv:ApiService) {
   }
 
   ngOnInit(): void {
@@ -40,8 +41,10 @@ export class ContainerComponent implements OnInit {
       const idFromRoute = params['id'];
       if(!!idFromRoute){
         const sub = this.sessionSv.getContainerMap().subscribe(cMap => {
-          this.mainContainer = cMap[idFromRoute];
-          this.selectedContainer = this.mainContainer;
+          if(!!cMap){
+            this.mainContainer = cMap[idFromRoute];
+            this.selectedContainer = this.mainContainer;
+          }
         })
       }
     });
@@ -130,73 +133,35 @@ export class ContainerComponent implements OnInit {
   }
 
   onAddItem(){
-    this.sessionSv.showFloatingPanel = true;
-    this.sessionSv.floatingPanelContent = FloatingPanelContentEnum.ITEM_LOOKUP
-    this.sessionSv.floatPanContStyle['width'] = '30vw'
-    this.itemLkpSub = this.itemLkpSv.onItemPicked.subscribe(
-      item => {
-        this.handleItemAdd(item);
-        this.sessionSv.showFloatingPanel = false;
-      }
+    const itemLookupDialogRef = this.dialog.open(
+      ItemLookupComponent
     )
+    itemLookupDialogRef.afterClosed().subscribe(item => {
+      if(!!item)
+        this.handleItemAdd(item);
+    })
   }
 
   handleItemAdd(item){
-
     this.itemToAdd = item;
 
     const dialogRef = this.dialog.open(
       ObjectEditorDialogComponent,
       {
         width: '30vw', 
-        data:{title: 'Item Quantity', value:{'quantity':''}}
+        data:{title: 'Item Quantity', values:{'quantity':''}}
       }
     )
 
     dialogRef.afterClosed().subscribe(async result => {
       if(result != null){
         const qty = parseInt(result.quantity);
-        if(this.mainContainer.items[this.itemToAdd._id]){
-          this.mainContainer.items[this.itemToAdd._id].quantity += qty
-        }
-        else{
-          this.mainContainer.items[this.itemToAdd._id] = {item:this.itemToAdd,quantity: qty}
-        }
-
-        this.httpClient.post(
-          '/containers/addItem', 
-          {
-            item: this.itemToAdd._id,
-            container: this.selectedContainer._id,
-            quantity: this.mainContainer.items[this.itemToAdd._id].quantity
-          },
-          {headers: {service: SERVICES.BACKEND}}
-        ).toPromise().then((data) => console.log("OK "+data))
+        this.apiSv.addItemToContainer(this.selectedContainer._id, this.itemToAdd._id, qty);
       }
     });
   }
 
-  handleAddQuantity(quantityAdd){
-    const {containerItemId, amount} = quantityAdd;
-    for(let itemId in this.selectedContainer.itemsMap){
-      const item =  this.selectedContainer.itemsMap[itemId];
-      for(let containerName in item.quantityMap){
-        const container = item.quantityMap[containerName];
-        for(let createdDate in container.quantityMap){
-          if(container.quantityMap[createdDate]._id === containerItemId){
-            this.httpClient.put(
-              '/containerItems/'+containerItemId, 
-              {
-                quantity: container.quantityMap[createdDate].quantity + amount
-              },
-              {headers: {service: SERVICES.BACKEND}}
-            ).toPromise().then(
-              () => { container.quantityMap[createdDate].quantity += amount }
-            )
-            return;
-          }
-        }
-      }
-    }
-  }
+  handleQuantityChange(quantityChange){
+    this.apiSv.addItemQuantity(quantityChange)
+  }         
 }

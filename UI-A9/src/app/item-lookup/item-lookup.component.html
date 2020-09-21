@@ -1,6 +1,6 @@
 <div class="app-fill">
-    <h3 style="text-align: center;">Item Lookup</h3>
-    <div>
+    <h1 mat-dialog-title>Item Lookup</h1>
+    <div mat-dialog-content class="dialog-content">
         <input style="width: 99%;" type="text" [(ngModel)]="lookupText" />
         <div style="padding: 0px 20px;">
             <ng-container *ngFor="let itemId of utilSv.getObjectKeys(itemStore)">
@@ -11,5 +11,7 @@
             </ng-container>
         </div>
     </div>
-    <button (click)="handleAddItem()">Add Item</button>
+    <div mat-dialog-actions>
+        <button mat-raised-button (click)="handleAddItem()" cdkFocusInitial>Add Item</button>
+    </div>
 </div>

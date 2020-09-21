@@ -1,9 +1,9 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 export interface DialogData{
   title:string;
-  value:any;
+  values:any;
 }
 
 @Component({
@@ -17,10 +17,10 @@ export class ObjectEditorDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<ObjectEditorDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data:DialogData
     ) {
-      const {value} = data;
-      Object.keys(value).forEach(field => {
-        if(typeof(value[field]) !== 'object')
-          value[field] = {value: value[field], formLabel:field, required:true}
+      const {values} = data;
+      Object.keys(values).forEach(field => {
+        if(typeof(values[field]) !== 'object')
+        values[field] = {value: values[field], formLabel:field, required:true}
       })
     }
 
@@ -44,12 +44,12 @@ export class ObjectEditorDialogComponent implements OnInit {
     if(!Object.keys(validatedValues).some(field => !!validatedValues[field].error))
       this.dialogRef.close(this.getReturn(validatedValues))
     else{
-      this.data.value = validatedValues;
+      this.data.values = validatedValues;
     }
   }
 
   validateData():boolean {
-    const {value} = this.data;
+    const {values: value} = this.data;
     Object.keys(value).forEach(
       field => {
         if(value[field].required && !value[field].value)

@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
-
+import { MatButtonModule } from '@angular/material/button';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,7 +18,6 @@ import { ItemListEntryComponent } from './items-list/item-list-entry/item-list-e
 import { ItemsListComponent } from './items-list/items-list.component';
 import { ItemLookupComponent } from './item-lookup/item-lookup.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { GenericInputPanelComponent } from './generic-input-panel/generic-input-panel.component';
 import { HomeComponent } from './home/home.component';
 import { ObjectEditorDialogComponent } from './object-editor-dialog/object-editor-dialog.component';
 import { BaseUrlInterceptorService } from './interceptors/base-url-interceptor.service';
@@ -34,7 +33,6 @@ import { ItemListEntryRowComponent } from './items-list/item-list-entry/item-lis
     ItemListEntryComponent,
     ItemsListComponent,
     ItemLookupComponent,
-    GenericInputPanelComponent,
     HomeComponent,
     ObjectEditorDialogComponent,
     ItemListEntryRowComponent
@@ -49,6 +47,7 @@ import { ItemListEntryRowComponent } from './items-list/item-list-entry/item-lis
     HttpClientModule,
     MatFormFieldModule,
     MatDialogModule,
+    MatButtonModule,
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseUrlInterceptorService, multi: true}],
   bootstrap: [AppComponent]

@@ -1,13 +1,16 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, Inject } from '@angular/core';
 import { SessionService } from '../services/session.service';
 import { UtilService } from '../services/util.service';
 import { ItemLookupService } from '../services/item-lookup.service';
-import { Item } from '../data-model/item';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ObjectEditorDialogComponent } from '../object-editor-dialog/object-editor-dialog.component';
 import { HttpClient } from '@angular/common/http';
 import { SERVICES } from '../interceptors/base-url-interceptor.service';
+import { ApiService } from '../services/api.service';
 
+interface DialogData {
+
+}
 @Component({
   selector: 'app-item-lookup',
   templateUrl: './item-lookup.component.html',
@@ -18,17 +21,21 @@ export class ItemLookupComponent implements OnInit {
   itemStore:{};
   lookupText = "";
   itemSelected;
+  userId;
 
   constructor(public sessionSv:SessionService, public utilSv:UtilService, public itemLookupSv:ItemLookupService,
-    public dialog:MatDialog, public httpClient:HttpClient) {
+    public dialogRef: MatDialogRef<ItemLookupComponent>, private apiService:ApiService,
+    @Inject(MAT_DIALOG_DATA) public data:DialogData, public dialog:MatDialog
+  ) {
     sessionSv.getItemHistory().subscribe((iS=>{this.itemStore = iS}))
+    sessionSv.getUser().subscribe(user => {this.userId = user._id})
   }
 
   ngOnInit(): void {
   }
 
   handleItemClick(item){
-    this.itemLookupSv.onItemPicked.emit(item);
+    this.dialogRef.close(item);
   }
 
   ngOnDestroy(){
@@ -42,7 +49,7 @@ export class ItemLookupComponent implements OnInit {
         width: '30vw', 
         data:{
           title: 'New Item',
-          value:{
+          values:{
             name:{formLabel:"Name", required: true},
             lifetime:{value:10, formLabel:"Life time (days)"}
           }
@@ -51,13 +58,11 @@ export class ItemLookupComponent implements OnInit {
     );
 
     dialogRef.afterClosed().subscribe(result => {
-      const item = {name:result.name, lifetime: result.lifetime};
-      this.httpClient.post('/items',item, {headers: {service: SERVICES.BACKEND}})
-        .toPromise()
-        .then( item => this.sessionSv.setItemHistory({...this.itemStore, [item['_id']]:item}))
-        .catch(err => console.error(err))
+      if(!!result){
+        const item = {name:result.name, lifetime: result.lifetime};
+        this.apiService.addItemToStorage(item);
+      }
     })
-
   }
 
 }

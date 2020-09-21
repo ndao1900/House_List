@@ -1,11 +1,11 @@
 import { Item } from './item';
+import { QuantityMap } from './quanityMap';
 
 export class Container{
     _id:string
     name:string
     layout
-    items
-    itemsMap
+    itemsMap: {[id:string]:QuantityMap}
 
     constructor(container?){
         Object.assign(this, container);
@@ -19,7 +19,7 @@ export class Container{
 
     addToItemMap(itemMap, container){
         let newItemMap = JSON.parse(JSON.stringify(itemMap));
-        container.items.map(
+        container.containerItems.map(
             (itemQty) => {
                 const itemId = itemQty.item._id;
                 const quanityCreatedTime = itemQty.createdAt; 

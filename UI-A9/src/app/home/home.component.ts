@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { SessionService } from '../services/session.service';
-import { GenericInputPanelService } from '../services/generic-input-panel.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ObjectEditorDialogComponent } from '../object-editor-dialog/object-editor-dialog.component'
 import { Container } from '../data-model/container';
 import { HttpClient } from '@angular/common/http';
 import { EnvService } from '../services/env.service';
 import { SERVICES } from '../interceptors/base-url-interceptor.service';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-home',
@@ -16,8 +16,7 @@ import { SERVICES } from '../interceptors/base-url-interceptor.service';
 export class HomeComponent implements OnInit {
   containerMap = {}
 
-  constructor(public sessionSv:SessionService, public gpSv:GenericInputPanelService, private dialog:MatDialog,
-    private httpClient:HttpClient, private envSv:EnvService) {
+  constructor(public sessionSv:SessionService, private dialog:MatDialog, private apiSv:ApiService) {
     sessionSv.getContainerMap().subscribe(cMap => this.containerMap = cMap)
   }
 
@@ -26,20 +25,14 @@ export class HomeComponent implements OnInit {
 
   onAddContainerClick(){
     const dialogRef = this.dialog.open(ObjectEditorDialogComponent,
-       {width: '80vw', 
-       data:{title: 'Add Container', value:{'name':''}}
+       {width: '30vw', 
+       data:{title: 'Add Container', values:{'name':''}}
       }
     )
 
-    dialogRef.afterClosed().subscribe(async result => {
-      if(result != null){
-        result; 
-        await this.httpClient.post(
-          '/containers/'+this.sessionSv.user.value['_id'],
-          {...result},
-          {headers: {service: SERVICES.BACKEND}}
-        ).toPromise();
-        this.sessionSv.getUserData();
+    dialogRef.afterClosed().subscribe(async container => {
+      if(!!container){
+        this.apiSv.addContainer(container)
       }
     });
     

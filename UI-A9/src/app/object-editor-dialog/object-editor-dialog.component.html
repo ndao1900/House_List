@@ -1,9 +1,9 @@
 <h1 mat-dialog-title>{{data.title}}</h1>
 <div mat-dialog-content class="dialog-content">
-    <div *ngFor="let valueObj of data.value | keyvalue; trackBy:trackByFn" >
+    <div *ngFor="let valueObj of data.values | keyvalue; trackBy:trackByFn" >
         <p style="font-weight: bold;">{{!!valueObj.value.formLabel? valueObj.value.formLabel:valueObj.key}}</p>
         <div>
-          <input [disabled]="valueObj.key == '_id'" matInput [(ngModel)]="data.value[valueObj.key].value">
+          <input [disabled]="valueObj.key == '_id'" matInput [(ngModel)]="data.values[valueObj.key].value">
           <p style="color: red;" *ngIf="!!valueObj.value.error">{{valueObj.value.error}}</p>
         </div> 
     </div>

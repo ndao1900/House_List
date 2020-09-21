@@ -1,6 +1,6 @@
 <div [ngClass]="['container', 'container-names-container']">
     <ng-container *ngFor='let entry of containerMap | keyvalue'>
-        <a [routerLink]="['container/', entry.value.name]">{{entry.value.name}}</a>
+        <a [routerLink]="['container/', entry.key]">{{entry.value.name}}</a>
     </ng-container>
 </div>
 <button (click)="onAddContainerClick()">Add Container</button>

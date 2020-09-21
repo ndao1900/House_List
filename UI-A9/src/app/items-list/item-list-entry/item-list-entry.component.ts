@@ -14,7 +14,7 @@ export class ItemListEntryComponent implements OnInit {
   @Input() highlight = {}
   @Output() onItemSelect = new EventEmitter<{[id:number]:{[containerId:string]:boolean}}>();
   @Output() onItemHover = new EventEmitter<{[id:number]:{[containerId:string]:boolean}}>();
-  @Output() onAddQty = new EventEmitter<{containerItemId:string, amount:number}>();
+  @Output() onChangeQty = new EventEmitter<{containerItemId:string, newQuantity:number}>();
   expand = {container: false, createdDate: false};
 
   constructor(public utilSv:UtilService) { }
@@ -71,14 +71,13 @@ export class ItemListEntryComponent implements OnInit {
     }, []);
   }
 
-  handleAdd(event, containerItemId){
-    event.stopPropagation();
-    this.onAddQty.emit({containerItemId, amount: 1});
-  }
+  handleItemQuantityChange(containerItemId, newQuantity){
+    if(!!containerItemId){
+      this.onChangeQty.emit({containerItemId, newQuantity});
+    } else {
+      //TODO: add item with current date
+    }
 
-  handleRemove(event, containerItemId){
-    event.stopPropagation();
-    this.onAddQty.emit({containerItemId, amount: -1});
   }
 
   getTotal(quantityMap){
@@ -99,9 +98,5 @@ export class ItemListEntryComponent implements OnInit {
 
   isHighlight(highlight){
     return false;
-  }
-
-  canInteract(quantityMap){
-    this.getContainerItemsId(quantityMap).length === 1;
   }
 }

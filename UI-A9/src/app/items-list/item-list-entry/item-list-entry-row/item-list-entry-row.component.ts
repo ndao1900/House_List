@@ -14,8 +14,7 @@ export class ItemListEntryRowComponent implements OnInit {
   @Input() containerName?:string;
   @Input() daysLeft?:number;
   @Output() onExpand = new EventEmitter();
-  @Output() onAdd = new EventEmitter();
-  @Output() onRemove = new EventEmitter();
+  @Output() onQtyChange = new EventEmitter();
 
   expanded:boolean = false;
 
@@ -27,6 +26,11 @@ export class ItemListEntryRowComponent implements OnInit {
   handleExpand(){
     this.expanded = !this.expanded;
     this.onExpand.emit();
+  }
+
+  handleQuantityChange(event, amount){
+    event.stopPropagation();
+    this.onQtyChange.emit(amount);
   }
 
 }

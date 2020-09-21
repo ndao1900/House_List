@@ -18,12 +18,14 @@
                     [canInteract]="true"
                     [daysLeft]="getDaysLeftFromQuantityMap(containerEntry.value.quantityMap).join(', ')"  
                     (onExpand)="onExpandClick('createdDate')"
+                    (onQtyChange)="handleItemQuantityChange(null, $event)"
                 ></app-item-list-entry-row>
                 <ng-container *ngIf="expand['createdDate']">
                     <app-item-list-entry-row *ngFor="let createdDateEntry of containerEntry.value.quantityMap | keyvalue; let i = index"
                         [quantity]="createdDateEntry.value.quantity"
                         [canInteract]="true"
-                        [daysLeft]="utilSv.getDaysLeft(createdDateEntry.key, item.lifetime)"  
+                        [daysLeft]="utilSv.getDaysLeft(createdDateEntry.key, item.lifetime)"
+                        (onQtyChange)="handleItemQuantityChange(createdDateEntry.value._id, createdDateEntry.value.quantity + $event)"  
                     ></app-item-list-entry-row>
                 </ng-container>
             </ng-container>
