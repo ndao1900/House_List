@@ -1,8 +1,3 @@
 .highlight{
     background:orange;
 }
-
-.item{
-    display: grid;
-    grid-template-columns: 10px auto 20px 40% 50px 100px;
-}

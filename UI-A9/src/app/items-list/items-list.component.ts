@@ -18,10 +18,13 @@ export class ItemsListComponent implements OnInit {
   }
 
   itemSearchTerm = "";
+  @Input() displayColumns = []
   @Input() container:Container;
   @Input() highlight = {};
   @Input() readOnly = false;
-  @Input() displayColumns = []
+  @Input() hideColumns = [];
+
+  @Output() onSelect = new EventEmitter<any>();
   @Output() onItemSelect = new EventEmitter<any>();
   @Output() onEditLayout = new EventEmitter<any>();
   @Output() onAddItem = new EventEmitter<any>();
@@ -30,12 +33,13 @@ export class ItemsListComponent implements OnInit {
   getItemQty = false;
   
   constructor(public utilSv:UtilService, public sessionSv:SessionService, private itemLkpSv:ItemLookupService ) {
-    if(this.displayColumns.length === 0){
-      this.displayColumns = Object.keys(this.COLUMNS)
-    }
    }
 
   ngOnInit(): void {
+    if(this.displayColumns.length === 0){
+      this.displayColumns = Object.keys(this.COLUMNS)
+    }
+    this.displayColumns = this.displayColumns.filter(col => !this.hideColumns.includes(col));
   }
 
   handleItemSelected(itemContMap){
@@ -52,6 +56,10 @@ export class ItemsListComponent implements OnInit {
 
   handleQtyChange(quantityChange:{containerId:string, itemId:string, containerItemId:string, amount:number}){
     this.onQuantityChange.emit(quantityChange,);
+  }
+
+  handleHeaderClick(){
+    this.onSelect.emit(this.container._id)
   }
 
   getGridLayout(){

@@ -21,7 +21,7 @@ export class ApiService {
   async addContainer(container){
     return new Promise((resolve, reject) => {
       this.httpClient.post(
-        `/containers/${this.user._id}`,
+        `/containers`,
         container,
         {headers: {service: SERVICES.BACKEND}}
       ).toPromise()

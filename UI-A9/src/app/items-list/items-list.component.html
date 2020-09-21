@@ -1,6 +1,6 @@
-<mat-card>
+<mat-card class="fill">
     <mat-card-header>
-        <mat-card-title>{{container.name}}</mat-card-title>
+        <mat-card-title class="clickable" (click)="handleHeaderClick()">{{container.name}}</mat-card-title>
     </mat-card-header>
     <input mat-input [(ngModel)]="itemSearchTerm" placeholder="search..." (click)="$event.stopPropagation()"/>
     <mat-card-content>
@@ -15,14 +15,15 @@
                 [highlight]="highlight" [item]="container.itemsMap[id]"
                 [gridStyle]="getGridLayout()"
                 [displayColumns]="displayColumns"
+                [readOnly] = "readOnly"
                 (onItemSelect)="handleItemSelected($event)"
                 (onChangeQty)="handleQtyChange($event)"
                 *ngIf="container.itemsMap[id].name.includes(itemSearchTerm.toLowerCase())">
             </app-item-list-entry>
         </div>
     </mat-card-content>
-    <mat-card-actions>
-        <button (click)="handleAddItemClick()" mat-button>ADD ITEM</button>
-        <button (click)="handleEditLayoutClick()" mat-button>EDIT LAYOUT</button>
+    <mat-card-actions *ngIf="!readOnly">
+        <button (click)="handleAddItemClick()" mat-raised-button>ADD ITEM</button>
+        <button (click)="handleEditLayoutClick()" mat-raised-button>EDIT LAYOUT</button>
     </mat-card-actions>
 </mat-card>

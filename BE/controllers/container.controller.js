@@ -34,7 +34,7 @@ exports.create = (req, res) => {
 
     const container = new Container(req.body);
 
-    const userId = req.params.userId;
+    const userId = req.query.userId;
     if(userId){
         runInTransaction(session => {
             container.save()

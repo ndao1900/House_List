@@ -1,6 +1,12 @@
-<div [ngClass]="['container', 'container-names-container']">
-    <ng-container *ngFor='let entry of containerMap | keyvalue'>
-        <a [routerLink]="['container/', entry.key]">{{entry.value.name}}</a>
+<div [ngClass]="['containerCardContainer']">
+    <ng-container *ngFor='let containerEntry of containerMap | keyvalue'>
+        <div [ngClass]="['containerCard']">
+            <app-items-list [container]="containerEntry.value" [readOnly]="true"
+                [hideColumns]="hideColumns" (onSelect)="handleContainerSelect($event)"
+            ></app-items-list>
+        </div>
     </ng-container>
 </div>
-<button (click)="onAddContainerClick()">Add Container</button>
+<div [ngClass]="['buttonContainer']">
+    <button mat-raised-button (click)="onAddContainerClick()">Add Container</button>
+</div>

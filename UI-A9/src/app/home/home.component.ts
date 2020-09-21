@@ -2,11 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { SessionService } from '../services/session.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ObjectEditorDialogComponent } from '../object-editor-dialog/object-editor-dialog.component'
-import { Container } from '../data-model/container';
-import { HttpClient } from '@angular/common/http';
-import { EnvService } from '../services/env.service';
-import { SERVICES } from '../interceptors/base-url-interceptor.service';
 import { ApiService } from '../services/api.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -15,8 +12,9 @@ import { ApiService } from '../services/api.service';
 })
 export class HomeComponent implements OnInit {
   containerMap = {}
+  hideColumns = ['CONTAINER'];
 
-  constructor(public sessionSv:SessionService, private dialog:MatDialog, private apiSv:ApiService) {
+  constructor(public sessionSv:SessionService, private dialog:MatDialog, private apiSv:ApiService, private router:Router) {
     sessionSv.getContainerMap().subscribe(cMap => this.containerMap = cMap)
   }
 
@@ -35,7 +33,10 @@ export class HomeComponent implements OnInit {
         this.apiSv.addContainer(container)
       }
     });
-    
+  }
+
+  handleContainerSelect(containerId){
+    this.router.navigate([`/container/${containerId}`]);
   }
 
 }

@@ -22,7 +22,7 @@ import { HomeComponent } from './home/home.component';
 import { ObjectEditorDialogComponent } from './object-editor-dialog/object-editor-dialog.component';
 import { BaseUrlInterceptorService } from './interceptors/base-url-interceptor.service';
 import { ItemListEntryRowComponent } from './items-list/item-list-entry/item-list-entry-row/item-list-entry-row.component';
-import { ContainerCardComponent } from './container-card/container-card.component'
+import { TopAppBannerComponent } from './top-app-banner/top-app-banner.component'
 
 @NgModule({
   declarations: [
@@ -37,7 +37,7 @@ import { ContainerCardComponent } from './container-card/container-card.componen
     HomeComponent,
     ObjectEditorDialogComponent,
     ItemListEntryRowComponent,
-    ContainerCardComponent
+    TopAppBannerComponent
   ],
   imports: [
     BrowserModule,

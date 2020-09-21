@@ -1,4 +1,21 @@
-.container-names-container {
-    height: 200px;
-    width: 100px ;
+.containerCardContainer {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    min-height: 50%;
+    width: 100% ;
+    flex-wrap: wrap;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.containerCard{
+    padding: 10px;
+    width: 300px;
+    height: 300px;
 }

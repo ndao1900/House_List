@@ -1,0 +1,10 @@
+.topBanner {
+    background: black;
+    justify-content: flex-start;
+}
+
+.topBanner h1 {
+    color: white;
+    margin-left: 10px;
+    margin-bottom: 0px;
+}

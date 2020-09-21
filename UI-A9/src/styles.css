@@ -1,4 +1,46 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+    --topAppBannerHieght: 7vh;
+}
+
+.clickable{
+    color: rgb(0, 81, 255);
+    cursor: pointer;
+}
+
+.clickable:hover{
+    color: rgb(73, 131, 255);
+}
+
+.hoverable:hover{
+    background: rgba(255, 166, 0, 0.486);
+}
+
+.flex-space-between{
+    display: flex;
+    justify-content: space-between;
+}
+
+.highlight{
+    background: orange;
+}
+
+.fill{
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+}
+
+.whole-item-list-entry-row{
+    grid-column: 1 / span 5;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
