@@ -1,10 +1,18 @@
-const Container = require('../models/container.model.js');
+const Container = require('../models/container.model.js').model;
 const { runInTransaction } = require('mongoose-transact-utils');
 const User = require('../models/user.model');
-const ContainerItemController = require('./container-item.controller');
+const UserController = require('./user.controller');
+const {areStringsEqual, toKey, defaultIfNull} = require('../utils/utils.js');
+
+const handleFailTransaction = ({err, res, message}) => {
+    console.log(err);
+    return res.status(defaultIfNull(err.status, 500)).send({message: message});
+}
 
 exports.checkContainerOwnership = (req,res,next) => {
-    if(!!req.query.userId && !!req.params.containerId){
+    const userId = req.params.userId;
+    const containerId = req.params.userId;  
+    if(!!userId && !!containerId){
         User.findOne(
             {
                 _id: req.query.userId,
@@ -27,89 +35,87 @@ exports.checkContainerOwnership = (req,res,next) => {
 
 exports.create = (req, res) => {
     if(!req.body.name) {
-        return res.status(400).send({
-            message: "Container name can not be empty"
-        });
+        return res.status(400).send({message: "Container name can not be empty"});
+    }
+    if(!req.params.userId) {
+        return res.status(400).send({message: "UserId name can not be empty"});
     }
 
     const container = new Container(req.body);
-
-    const userId = req.query.userId;
-    if(userId){
-        runInTransaction(session => {
-            container.save()
-                .then(container => {
-                    User.update({_id: userId},{$push: {containers: container._id}})
-                        .then(() => { res.send(container) })
-                        .catch(() => session.abortTransaction())
-                })
-                .catch(err=>{ 
-                    res.status(500).send({message: err.message || "Error when adding container"});
-                    session.abortTransaction()
-                })
-        })
-    }
+    UserController.findOne(req, res, false)
+        .then(user => {
+            if(!!user.containers.get(toKey(container.name))){
+                return res.status(400).send({message: `Container "${toKey(container.name)}" already existed`});
+            } else{
+                user.containers.set(toKey(container.name), container)
+                user.save().then((user) => res.send(user));
+        }})
 };
 
 exports.findAll = (req, res) => {
-    Container.find()
-        .then( containers => res.send(containers))
-        .catch(err=>{ res.status(500).send({message: err.message || "Error when getting all containers"})})
+    UserController.findOne(req, res, false)
+        .then(user => {
+            const containers = user.get("containers")
+            if(!!containers){
+                return res.send(containers);
+            } else {
+                console.error("user's container is null!")
+                return res.status("500").send()}})
 };
 
 exports.findOne = (req, res) => {
-    Container.findById(req.params.containerId)
-    .populate({path: 'containerItems', populate:{path:'item'}})
-    .then(container => {
-        if(!container) {
-            return res.status(404).send({
-                message: "Container not found with id " + req.params.containerId
-            });            
-        }
-        res.send(container);
-    }).catch(err => {
-        if(err.kind === 'ObjectId') {
-            return res.status(404).send({
-                message: "Container not found with id " + req.params.containerId
-            });                
-        }
-        return res.status(500).send({
-            message: "Error retrieving container with id " + req.params.containerId
-        });
-    });
-};
+    const {containerName} = req.params;
+    
+    UserController.findOne(req, res, false)
+        .then(user => {
+            const container = user.containers.get(toKey(containerName))
+                if(!!container){
+                    return res.send(container);
+                } else {
+                    return res.status("404").send({message: `no container "${containerName}" found`})}})};
 
 exports.update = (req, res) => {
-    if(!req.body.name) {
-        return res.status(400).send({
-            message: "Container name can not be empty"
-        });
+    const {containerName} = req.params;
+    let newContainer = req.body;
+    if(!containerName){
+       return res.status(400).send({message: "container must have name"});
     }
 
-    // Find container and update it with the request body
-    Container.findByIdAndUpdate(req.params.containerId, {
-        name: req.body.name, 
-        items: Object.assign({},req.body.items),
-        layout: req.body.layout
-    }, {new: true})
-    .then(container => {
-        if(!container) {
-            return res.status(404).send({
-                message: "Container not found with id " + req.params.containerId
-            });
-        }
-        res.send(container);
-    }).catch(err => {
-        if(err.kind === 'ObjectId') {
-            return res.status(404).send({
-                message: "Container not found with id " + req.params.containerId
-            });                
-        }
-        return res.status(500).send({
-            message: "Error updating container with id " + req.params.containerId
-        });
-    });
-};
+    UserController.findOne(req, res, false)
+        .then(user => {
+            const oldContainer = user.containers.get(toKey(containerName));
+            if(!!oldContainer){
+                runInTransaction(async session => {
+                    try{
+                        if(!!newContainer.name && !areStringsEqual(newContainer.name, containerName)){
+                            renameContainer({user, newContainer, oldContainer}); 
+                        } else {
+                            setNewContainer({user, oldContainer, newContainer});
+                        }
+                        user = await user.save();
+                        res.status(200).send(user);
+                    } catch(err){
+                        handleFailTransaction({err, session, res, message: !!err.status? err.message : "couldn't update container"})
+                    }
+                })
+            } else {
+               return res.status(400).send({message: `container "${containerName}" doesn't exist`}) }})};
+
+const renameContainer = ({user, newContainer, oldContainer}) => {
+    const conflictingContainer = user.containers.get(newContainer.name);
+    if(!!conflictingContainer){
+        throw { status:400, message: `container "${newContainer.name}" has already existed`};
+    } else {
+        user.containers.set(toKey(oldContainer.name), undefined);
+        setNewContainer({user, oldContainer, newContainer});
+    }
+}
+
+const setNewContainer = ({user, oldContainer, newContainer}) => {
+    Object.keys(newContainer).forEach(key => {oldContainer.set(key, newContainer[key])});
+    newContainer = oldContainer;
+    user.containers.set(toKey(newContainer.name), oldContainer);
+}
 
 exports.delete = (req, res) => {
     Container.findByIdAndRemove(req.params.containerId)

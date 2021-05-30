@@ -2,6 +2,7 @@ const User = require('../models/user.model.js');
 const Item = require('../models/item.model.js');
 const ItemController = require('../controllers/item.controller');
 const { runInTransaction } = require('mongoose-transact-utils');
+const { exception } = require('console');
 
 
 exports.create = (req, res) => {
@@ -13,7 +14,7 @@ exports.create = (req, res) => {
 
     const user = new User({
         name: req.body.name, 
-        containers: req.body.containers || []
+        containers: req.body.containers
     });
 
     user.save()
@@ -29,26 +30,30 @@ exports.findAll = (req, res) => {
         .catch(err=>{ res.status(500).send({message: err.message || "Error when getting all users"})})
 };
 
-exports.findOne = (req, res) => {
-    User.findById(req.params.userId)
-    .populate({path: 'containers', populate: {path: 'containerItems', populate:{path:'item'}}})
-    .populate('itemHistory')
-    .then(user => {
-        if(!user) {
-            return res.status(404).send({
-                message: "User not found with id " + req.params.userId
-            });            
-        }
-        res.send(user);
-    }).catch(err => {
-        if(err.kind === 'ObjectId') {
-            return res.status(404).send({
-                message: "User not found with id " + req.params.userId
-            });                
-        }
-        return res.status(500).send({
-            message: "Error retrieving user with id " + req.params.userId
-        });
+exports.findOne = (req, res, shouldSendResponse) => {
+    return new Promise((resolve, reject) => {
+        User.findById(req.params.userId)
+            .then(user => {
+                if(!user) {
+                    const errMessage = "User not found with id " + req.params.userId;
+                    console.error(errMessage);
+                    res.status(404).send({message: errMessage});
+                    reject(new exception(errMessage));
+                } else {
+                    if(shouldSendResponse){
+                        res.send(user);
+                    } else { resolve(user) }
+                } })
+            .catch(err => {
+                if(err.kind === 'ObjectId') {
+                    return res.status(404).send({
+                        message: "User not found with id " + req.params.userId
+                    });                
+                }
+                return res.status(500).send({
+                    message: "Error retrieving user with id " + req.params.userId
+                });
+            });
     });
 };
 

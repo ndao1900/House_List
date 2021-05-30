@@ -1,16 +1,14 @@
 module.exports = (app) => {
     const containers = require('../controllers/container.controller.js');
 
-    app.post('/containers/:containerId/addItem', containers.checkContainerOwnership, containers.addItem)
+    app.post('/users/:userId/containers', containers.create);
 
-    app.post('/containers', containers.create);
+    app.get('/users/:userId/containers', containers.findAll);
 
-    app.get('/containers', containers.findAll);
+    app.get('/users/:userId/containers/:containerName', containers.findOne);
 
-    app.get('/containers/:containerId', containers.checkContainerOwnership, containers.findOne);
+    app.put('/users/:userId/containers/:containerName', containers.update);
 
-    app.put('/containers/:containerId', containers.update);
-
-    app.delete('/containers/:containerId', containers.checkContainerOwnership, containers.delete);
+    app.delete('/users/:userId/containers/:containerId', containers.checkContainerOwnership, containers.delete);
 
 }

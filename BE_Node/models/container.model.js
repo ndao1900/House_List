@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const Item = require('../models/item.model.js').schema;
+const {nameAsKeyValidator} = require('../utils/utils.js');
+
 
 const ContainerSchema = mongoose.Schema({
-    name:{type: String,require:true,unique:true},
-    containerItems:[{type: Schema.Types.ObjectId, ref:"ContainerItem"}],
+    name:{type: String},
+    items:{type: Map, of: Item, default:{}, validate: nameAsKeyValidator},
     layout:{type: JSON, default:{
         tiles:[],
         size:[4,4]
@@ -12,4 +15,8 @@ const ContainerSchema = mongoose.Schema({
     timestamps: true,
     minimize: false
 });
-module.exports = mongoose.model('Container', ContainerSchema);
+module.exports = 
+{
+    model: mongoose.model('Container', ContainerSchema),
+    schema: ContainerSchema
+}
