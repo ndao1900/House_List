@@ -63,16 +63,21 @@ exports.findAll = (req, res) => {
                 return res.status("500").send()}})
 };
 
-exports.findOne = (req, res) => {
-    const {containerName} = req.params;
-    
+exports.findOne = (req, res, shouldSendResponse = true) => {
+    return new Promise((resolve, reject) => {
+        const {containerName} = req.params;
     UserController.findOne(req, res, false)
         .then(user => {
             const container = user.containers.get(toKey(containerName))
                 if(!!container){
-                    return res.send(container);
+                    resolve({user, container});
+                    if(shouldSendResponse)
+                        return res.send(container);
                 } else {
-                    return res.status("404").send({message: `no container "${containerName}" found`})}})};
+                    const errorMessage = `no container "${containerName}" found`;
+                    reject({status: 404, message:errorMessage })
+                    return res.status(404).send({message: errorMessage}) }})} )};
+    
 
 exports.update = (req, res) => {
     const {containerName} = req.params;
@@ -114,29 +119,20 @@ const renameContainer = ({user, newContainer, oldContainer}) => {
 const setNewContainer = ({user, oldContainer, newContainer}) => {
     Object.keys(newContainer).forEach(key => {oldContainer.set(key, newContainer[key])});
     newContainer = oldContainer;
-    user.containers.set(toKey(newContainer.name), oldContainer);
+    user.containers.set(toKey(newContainer.name), newContainer);
 }
 
 exports.delete = (req, res) => {
-    Container.findByIdAndRemove(req.params.containerId)
-    .then(container => {
-        if(!container) {
-            return res.status(404).send({
-                message: "Container not found with id " + req.params.containerId
-            });
-        }
-        res.send({message: "Container deleted successfully!"});
-    }).catch(err => {
-        if(err.kind === 'ObjectId' || err.name === 'NotFound') {
-            return res.status(404).send({
-                message: "Container not found with id " + req.params.containerId
-            });                
-        }
-        return res.status(500).send({
-            message: "Could not delete container with id " + req.params.containerId
-        });
-    });
-};
+    UserController.findOne(req, res, false)
+        .then(user => {
+            const {containerName} = req.params;
+            if(!containerName){
+                return res.status("400").send({message: `no container name provided`})
+            } else {
+                user.containers.set(toKey(containerName), undefined)
+                user.save()
+                    .then(user => res.send(user))
+                    .catch(err => {console.error(err); res.status(500).send();}) } }) };
 
 exports.addItem = (req, res) => {
     const containerId = req.params.containerId;

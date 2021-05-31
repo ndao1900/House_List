@@ -32,6 +32,7 @@ require('./routes/item.routes.js')(app);
 require('./routes/container.routes.js')(app);
 require('./routes/user.routes.js')(app);
 require('./routes/container-item.routes.js')(app);
+require('./routes/item-history.routes.js')(app);
 app.listen(port, ()=>{console.log('Server started on port '+port.toString())});
 //console.log(app._router.stack.map(layer => layer.route));
 

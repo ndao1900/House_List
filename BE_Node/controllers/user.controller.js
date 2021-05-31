@@ -30,7 +30,7 @@ exports.findAll = (req, res) => {
         .catch(err=>{ res.status(500).send({message: err.message || "Error when getting all users"})})
 };
 
-exports.findOne = (req, res, shouldSendResponse) => {
+exports.findOne = (req, res, shouldSendResponse = true) => {
     return new Promise((resolve, reject) => {
         User.findById(req.params.userId)
             .then(user => {

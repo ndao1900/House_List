@@ -1,7 +1,9 @@
 module.exports = (app) => {
-    const users = require('../controllers/user.controller.js');
+    const itemHistory = require('../controllers/item-history.controller.js');
     
-    app.post('/users/:userId/items', users.addItemHistory);
+    app.get('/users/:userId/items', itemHistory.findAll);
 
-    app.delete('/users/:userId/items/:itemId', users.removeItemHistory);
+    app.put('/users/:userId/items', itemHistory.upsert);
+
+    app.patch('/users/:userId/items/:itemName', itemHistory.patch);
 }

@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
+const {validateDate} = require('../utils/utils.js');
 
 const ContainerItemSchema = mongoose.Schema({
-    item:{type: mongoose.Schema.Types.ObjectId, ref: 'Item'},
-    container:{type: mongoose.Schema.Types.ObjectId, ref: 'Container'},
-    quantity:{type: Number}
-}, {
-    timestamps: true
-});
-module.exports = mongoose.model('ContainerItem', ContainerItemSchema);
+    name: {type: String, required: true},
+    count: {type: Number, default: 1},
+    timeAdded: {type: String, required: true, validate: [validateDate, 'date {VALUE} is not in the form of "mm/dd/yyyy"']}
+}, {timestamps: true});
+module.exports = {
+    model: mongoose.model('ContainerItem', ContainerItemSchema),
+    schema: ContainerItemSchema
+}

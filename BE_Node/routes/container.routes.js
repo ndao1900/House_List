@@ -9,6 +9,6 @@ module.exports = (app) => {
 
     app.put('/users/:userId/containers/:containerName', containers.update);
 
-    app.delete('/users/:userId/containers/:containerId', containers.checkContainerOwnership, containers.delete);
+    app.delete('/users/:userId/containers/:containerName', containers.delete);
 
 }
