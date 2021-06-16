@@ -13,16 +13,18 @@ import { EditContainerLayoutComponent } from './edit-container-layout/edit-conta
 import { GridsterModule } from 'angular-gridster2';
 import { GridCustomItemComponent } from './grid-custom-item/grid-custom-item.component';
 import { EditGridItemPanelComponent } from './edit-grid-item-panel/edit-grid-item-panel.component';
-import { ContainerComponent } from './container/container.component';
+// import { ContainerComponent } from './container/container.component';
 import { ItemListEntryComponent } from './items-list/item-list-entry/item-list-entry.component';
 import { ItemsListComponent } from './items-list/items-list.component';
-import { ItemLookupComponent } from './item-lookup/item-lookup.component';
+// import { ItemLookupComponent } from './item-lookup/item-lookup.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HomeComponent } from './home/home.component';
 import { ObjectEditorDialogComponent } from './object-editor-dialog/object-editor-dialog.component';
 import { BaseUrlInterceptorService } from './interceptors/base-url-interceptor.service';
 import { ItemListEntryRowComponent } from './items-list/item-list-entry/item-list-entry-row/item-list-entry-row.component';
 import { TopAppBannerComponent } from './top-app-banner/top-app-banner.component'
+import { CommonModule } from '@angular/common';
+import { ProgressBarComponent } from './progress-bar/progress-bar.component';
 
 @NgModule({
   declarations: [
@@ -30,17 +32,17 @@ import { TopAppBannerComponent } from './top-app-banner/top-app-banner.component
     EditContainerLayoutComponent,
     GridCustomItemComponent,
     EditGridItemPanelComponent,
-    ContainerComponent,
+    // ContainerComponent,
     ItemListEntryComponent,
     ItemsListComponent,
-    ItemLookupComponent,
+    // ItemLookupComponent,
     HomeComponent,
     ObjectEditorDialogComponent,
     ItemListEntryRowComponent,
-    TopAppBannerComponent
+    TopAppBannerComponent,
+    ProgressBarComponent
   ],
   imports: [
-    BrowserModule,
     AppRoutingModule,
     FormsModule,
     GridsterModule,
@@ -50,6 +52,7 @@ import { TopAppBannerComponent } from './top-app-banner/top-app-banner.component
     MatFormFieldModule,
     MatDialogModule,
     MatButtonModule,
+    CommonModule
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseUrlInterceptorService, multi: true}],
   bootstrap: [AppComponent]

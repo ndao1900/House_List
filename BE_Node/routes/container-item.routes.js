@@ -3,4 +3,5 @@ module.exports = (app) => {
 
     app.put('/users/:userId/containers/:containerName/items', containerItems.upsert);
 
+    app.del('/users/:userId/containers/:containerName/items/:itemName', containerItems.delete);
 }

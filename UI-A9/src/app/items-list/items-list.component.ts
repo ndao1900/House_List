@@ -10,19 +10,13 @@ import { Container } from '../data-model/container';
   styleUrls: ['./items-list.component.css', '../app.component.css']
 })
 export class ItemsListComponent implements OnInit {
-  COLUMNS = {
-    ITEM: {gridCol: 'minmax(100px, 150px)', header: "Item"},
-    QUANTITY: {gridCol: '100px', header: "Qty", style:{"text-align":"center"}},
-    CONTAINER: {gridCol: 'minmax(100px, 150px)', header: "Container", style:{"text-align":"center"}},
-    DAYS_LEFT: {gridCol: '100px', header: "Days Left"}
-  }
 
   itemSearchTerm = "";
-  @Input() displayColumns = []
+  @Input() displayFields = []
   @Input() container:Container;
   @Input() highlight = {};
   @Input() readOnly = false;
-  @Input() hideColumns = [];
+  @Input() hideFields = [];
 
   @Output() onSelect = new EventEmitter<any>();
   @Output() onItemSelect = new EventEmitter<any>();
@@ -36,10 +30,14 @@ export class ItemsListComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    if(this.displayColumns.length === 0){
-      this.displayColumns = Object.keys(this.COLUMNS)
-    }
-    this.displayColumns = this.displayColumns.filter(col => !this.hideColumns.includes(col));
+    this.displayFields = this.displayFields.filter(col => !this.hideFields.includes(col));
+  }
+
+  shouldShow(field:string){
+    if( this.displayFields.length > 0){
+      return this.displayFields.some(fieldToDisplay => fieldToDisplay === field)}
+    else{
+      return !this.hideFields.some(fieldToHide => fieldToHide === field)}
   }
 
   handleItemSelected(itemContMap){
@@ -61,18 +59,4 @@ export class ItemsListComponent implements OnInit {
   handleHeaderClick(){
     this.onSelect.emit(this.container._id)
   }
-
-  getGridLayout(){
-    let gridStyle = {
-      display: 'grid',
-      gridTemplateColumns: "10px" 
-    }
-
-    this.displayColumns.forEach(col => {
-      gridStyle.gridTemplateColumns += ` ${this.COLUMNS[col].gridCol}`
-    })
-
-    return gridStyle;
-  }
-
 }

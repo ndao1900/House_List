@@ -12,7 +12,12 @@ exports.upsert = (req, res) => {
 
     ContainerController.findOne(req, res, false)
         .then(async ({user, container}) => {
+            if(!user.itemHistory.get(toKey(name))){
+                return res.status(400).send({message: `item name "${name}" is not in user's itemHistory`})
+            }
+            
             let newUser;
+
             await runInTransaction(async session => {
                 const itemRecords = container.items.get(toKey(name));
                 if(!itemRecords){
@@ -26,11 +31,32 @@ exports.upsert = (req, res) => {
                     }
                 }
                 user.markModified(container.$basePath)
-                newUser = await user.save()
+                try{
+                    return res.send(await user.save());
+                } catch(e){
+                    console.error(e);
+                    res.status(500).send();
+                }
             })
-
-            return res.send(newUser);
         });
+}
+
+exports.delete = (req, res) => {
+    const {itemName} = req.params;
+
+    ContainerController.findOne(req, res, false)
+    .then(async ({user, container}) => {
+        await runInTransaction(async session => {
+            container.items.set(toKey(itemName), undefined);
+            user.markModified(container.$basePath + `.items.${itemName}`);
+            try{
+                return res.send(await user.save());
+            } catch(e){
+                console.error(e);
+                res.status(500).send();
+            }
+        })
+    })
 }
 
 const getNewContainerItem = (body) => new ContainerItem(body);

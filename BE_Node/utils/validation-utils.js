@@ -1,4 +1,5 @@
 exports.uniqueValidator = (objArray, uniqueField) => {
+    if(!objArray) return true;
     let dupDetectMap = {};
     objArray.forEach(obj => {
         const val = obj[uniqueField];

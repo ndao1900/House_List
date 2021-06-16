@@ -25,12 +25,9 @@ export class AppComponent {
   }
 
   ngOnInit(){
-    this.apiSv.getUserData()
+    this.apiSv.getUser()
       .then( (userRes:User) => {
-        const user = new User(userRes);
-        this.sessionSv.setUser(user);
-        this.sessionSv.setContainerMap(user.getContainerMap());
-        this.sessionSv.setItemHistory(user.getItemHistoryMap());
+        this.sessionSv.setUser(new User(userRes));
       });
   }
 }

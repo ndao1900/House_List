@@ -1,40 +1,11 @@
 <div>
     <div>
         <app-item-list-entry-row
-            [gridStyle]="gridStyle"
             [itemName]="item.name" 
-            [containerName]="!expand['container']? getContainerNames():''" 
-            [canExpand]="!readOnly && canExpand(item.quantityMap)"
-            [quantity]="getTotal(item.quantityMap)"
-            [daysLeft]="getDaysLeftFromQuantityMap(item.quantityMap).join(', ')"
-            [displayColumns] = "displayColumns"  
+            [daysLeft]="getDaysLeft()"
+            [quantity]="item.count"
             (onExpand)="onExpandClick('container')"
         ></app-item-list-entry-row>
-        <ng-container *ngIf="expand['container']">
-            <ng-container *ngFor="let containerEntry of item.quantityMap | keyvalue">
-                <app-item-list-entry-row
-                    [gridStyle]="gridStyle" 
-                    [containerName]="containerEntry.value.name" 
-                    [canExpand]="!readOnly && canExpand(containerEntry.value.quantityMap)"
-                    [quantity]="getTotal(containerEntry.value.quantityMap)"
-                    [canInteract]="!readOnly"
-                    [daysLeft]="getDaysLeftFromQuantityMap(containerEntry.value.quantityMap).join(', ')"
-                    [displayColumns] = "displayColumns"  
-                    (onExpand)="onExpandClick('createdDate')"
-                    (onQtyChange)="handleItemQuantityChange(null, $event)"
-                ></app-item-list-entry-row>
-                <ng-container *ngIf="expand['createdDate']">
-                    <app-item-list-entry-row *ngFor="let createdDateEntry of containerEntry.value.quantityMap | keyvalue; let i = index"
-                        [gridStyle]="gridStyle"
-                        [quantity]="createdDateEntry.value.quantity"
-                        [canInteract]="!readOnly"
-                        [daysLeft]="utilSv.getDaysLeft(createdDateEntry.key, item.lifetime)"
-                        [displayColumns] = "displayColumns"
-                        (onQtyChange)="handleItemQuantityChange(createdDateEntry.value._id, createdDateEntry.value.quantity + $event)"  
-                    ></app-item-list-entry-row>
-                </ng-container>
-            </ng-container>
-        </ng-container>
     </div>
 </div>
 

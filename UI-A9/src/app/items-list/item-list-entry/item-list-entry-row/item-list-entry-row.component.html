@@ -1,15 +1,10 @@
-<div [ngStyle]="gridStyle">
-    <div [ngClass]="{'clickable':canExpand}" 
-        (click)="canExpand? handleExpand():{}"
-    > 
-        {{canExpand? 
-            expanded? 'v':'>' 
-            : ''
-        }}
+<div [ngStyle]="{'position':'relative'}">
+    <div class="p-bar-container fill">
+        <app-progress-bar [percentage]="getProgress()" [style]="getProgressStyle()"></app-progress-bar>
     </div>
-    <ng-container *ngFor="let col of displayColumns">
-        <div *ngIf="col === 'ITEM'" > {{itemName}} </div>
-        <div class="quantityCell" *ngIf="col === 'QUANTITY'">
+    <div class="item-info-container fill">
+        <div> {{itemName}} </div>
+        <div class="quantityCell">
             <div *ngIf="canInteract" class="clickable" style="color:red" 
                 (click)="handleQuantityChange($event, -1)"
             > - </div>
@@ -18,7 +13,8 @@
                 (click)="handleQuantityChange($event, 1)"
             > + </div>
         </div>
-        <div *ngIf="col === 'CONTAINER'" style="text-align: center;"> {{containerName}} </div>
-        <div *ngIf="col === 'DAYS_LEFT'"> {{daysLeft}} </div>
-    </ng-container>
+        <div> {{containerName}} </div>
+        <div> {{daysLeft}} </div>
+        <input [(ngModel)]="daysLeft" type="number">
+    </div>
 </div>

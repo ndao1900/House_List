@@ -13,6 +13,7 @@ exports.toKey = (ketStr) => {return ketStr.toUpperCase()};
 exports.defaultIfNull = (val, defaultVal) => val == null? defaultVal : val; 
 
 exports.nameAsKeyValidator = (map) => {
+    if(map === undefined) return true;
     let keyMap = {};
     map.forEach((val, key) => {
         if(keyMap[key])
@@ -26,7 +27,7 @@ exports.nameAsKeyValidator = (map) => {
         if(!!val){
           if(val instanceof Array){
             val.forEach(aVal => {
-                if(!this.areStringsEqual(aVal.name, key)){
+                if(aVal && !this.areStringsEqual(aVal.name, key)){
                     throw new Error(`Key "${key}" is not the same as name "${aVal.name}`);
                 }
             });

@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { UtilService } from '../../services/util.service';
 import { Item } from '../../data-model/item';
 import { EventManager } from '@angular/platform-browser';
+import { SessionService } from 'src/app/services/session.service';
 
 @Component({
   selector: 'app-item-list-entry',
@@ -10,23 +11,20 @@ import { EventManager } from '@angular/platform-browser';
 })
 export class ItemListEntryComponent implements OnInit {
 
-  @Input() item:any = {}
+  @Input() item
   @Input() highlight = {}
   @Input() gridStyle = {};
   @Input() displayColumns = [];
   @Input() readOnly = false;
+
   @Output() onItemSelect = new EventEmitter<{[id:number]:{[containerId:string]:boolean}}>();
   @Output() onItemHover = new EventEmitter<{[id:number]:{[containerId:string]:boolean}}>();
   @Output() onChangeQty = new EventEmitter<{containerItemId:string, newQuantity:number}>();
   expand = {container: false, createdDate: false};
 
-  constructor(public utilSv:UtilService) { }
+  constructor(public utilSv:UtilService, public sessionSv:SessionService) { }
 
   ngOnInit(): void {
-  }
-
-  canExpand(quantityMap){
-    return this.getContainerItemsId(quantityMap).length > 1
   }
 
   handleItemClick(event, quantityTargetedId?){
@@ -38,40 +36,21 @@ export class ItemListEntryComponent implements OnInit {
     this.expand[which] = !this.expand[which];
   }
 
-  getContainerNames(){
-    return Object.values(this.item.quantityMap).map((cont:any) => cont.name).join(", ");
+  getDaysLeft(){
+    try{
+      const dateAdded = Date.parse(this.item.timeAdded);
+      const today = new Date();
+      const timeElapsed = today.getTime() - dateAdded;
+      const daysElapsed = Math.ceil(timeElapsed / (1000 * 60 * 60 * 24));
+      return this.getLifeSpan() - daysElapsed;
+    } catch(err){
+      console.error("failed to get days left", err);
+      return -1;
+    }
   }
 
-  getDaysLeftFromQuantityMap(quantityMap):any{
-    let values = Object.values(quantityMap);
-    return values.reduce((dates:string[], value:any) => {
-      if(value.quantityMapLevel === 'container'){
-        return dates.concat(Object.keys(value.quantityMap).map(tsString => this.utilSv.getDaysLeft(tsString, this.item.lifetime).toString()))
-      } else {
-        console.error('Can only get dates from quantityMapLevel "container", quantityMap got: ' + JSON.stringify(value.quantityMapLevel))
-        return [];
-      }
-    },[]);
-  }
-
-  getAllContainerQuantityMap(){
-    return Object.values(this.item.quantityMap).map((cont:any) => cont.quantityMap);
-  }
-
-  getContainerItemsId(quantityMap):any{
-    let values = Object.values(quantityMap);
-    return  values.reduce((containerItemsIds:string[], value:any) => {
-      if(!!value.quantityMap){
-        return containerItemsIds.concat(this.getContainerItemsId(value.quantityMap))
-      } else {
-        if(!!value._id){
-          return containerItemsIds.concat([value._id]);
-        } else {
-          console.error('can\'t find id in quantity map: ' + JSON.stringify(quantityMap))
-          return null
-        }
-      }
-    }, []);
+  getLifeSpan(){
+    return this.sessionSv.getItem(this.item.name).lifetime;
   }
 
   handleItemQuantityChange(containerItemId, newQuantity){

@@ -1,25 +1,18 @@
 <mat-card class="fill">
     <mat-card-header>
         <mat-card-title class="clickable" (click)="handleHeaderClick()">{{container.name}}</mat-card-title>
+        <input mat-input [(ngModel)]="itemSearchTerm" placeholder="search..." (click)="$event.stopPropagation()"/>
     </mat-card-header>
-    <input mat-input [(ngModel)]="itemSearchTerm" placeholder="search..." (click)="$event.stopPropagation()"/>
     <mat-card-content>
-        <div [ngStyle]="getGridLayout()" >
-            <div></div>
-            <ng-container *ngFor="let col of displayColumns">
-                <div [ngStyle]="COLUMNS[col].style">{{COLUMNS[col].header}}</div>
-            </ng-container>
-        </div>
-        <div *ngFor="let id of utilSv.getObjectKeys(container.itemsMap)">
-            <app-item-list-entry 
-                [highlight]="highlight" [item]="container.itemsMap[id]"
-                [gridStyle]="getGridLayout()"
-                [displayColumns]="displayColumns"
-                [readOnly] = "readOnly"
-                (onItemSelect)="handleItemSelected($event)"
-                (onChangeQty)="handleQtyChange($event)"
-                *ngIf="container.itemsMap[id].name.includes(itemSearchTerm.toLowerCase())">
-            </app-item-list-entry>
+        <div *ngFor="let id of utilSv.getObjectKeys(container.items)">
+            <div *ngFor="let item of container.items[id]">
+                <app-item-list-entry
+                    *ngIf="item.name.includes(itemSearchTerm.toLowerCase())" 
+                    [highlight]="highlight" [item]="item"
+                    (onItemSelect)="handleItemSelected($event)"
+                    (onChangeQty)="handleQtyChange($event)">
+                </app-item-list-entry>
+            </div>
         </div>
     </mat-card-content>
     <mat-card-actions *ngIf="!readOnly">

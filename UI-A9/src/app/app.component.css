@@ -9,3 +9,8 @@
 .page-content{
     padding-top: calc(var(--topAppBannerHieght) + 20px);
 }
+
+.fill{
+    height: 100%;
+    width: 100%;
+}

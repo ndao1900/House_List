@@ -1,8 +1,8 @@
-<div [ngClass]="['containerCardContainer']">
-    <ng-container *ngFor='let containerEntry of containerMap | keyvalue'>
+<div *ngIf="!!user" [ngClass]="['containerCardContainer']">
+    <ng-container *ngFor='let containerEntry of user.containers | keyvalue'>
         <div [ngClass]="['containerCard']">
             <app-items-list [container]="containerEntry.value" [readOnly]="true"
-                [hideColumns]="hideColumns" (onSelect)="handleContainerSelect($event)"
+                [hideFields]="hideFields" (onSelect)="handleContainerSelect($event)"
             ></app-items-list>
         </div>
     </ng-container>

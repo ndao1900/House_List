@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { SessionService } from 'src/app/services/session.service';
 
 @Component({
   selector: 'app-item-list-entry-row',
@@ -21,7 +22,7 @@ export class ItemListEntryRowComponent implements OnInit {
 
   expanded:boolean = false;
 
-  constructor() { }
+  constructor(private sessionSv:SessionService) { }
 
   ngOnInit(): void {
   }
@@ -34,6 +35,21 @@ export class ItemListEntryRowComponent implements OnInit {
   handleQuantityChange(event, amount){
     event.stopPropagation();
     this.onQtyChange.emit(amount);
+  }
+
+  getProgress(){
+    if (this.daysLeft < 0) return "0";
+    if (this.daysLeft > this.sessionSv.getItem(this.itemName).lifetime) return "100";
+    return (((1.0*this.daysLeft) / this.sessionSv.getItem(this.itemName).lifetime) *100).toString()
+  }
+
+  getProgressStyle(){
+    const progress = parseFloat(this.getProgress());
+    const color = progress > 50? "green" : (progress > 20? "yellow" : "red");
+    return {
+      "opacity": 0.5,
+      "background-color": color
+    }
   }
 
 }

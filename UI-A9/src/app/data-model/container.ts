@@ -5,14 +5,14 @@ export class Container{
     _id:string
     name:string
     layout
-    itemsMap: {[id:string]:QuantityMap}
+    items: {[id:string]:QuantityMap}
 
     constructor(container?){
         Object.assign(this, container);
-        this.itemsMap = this.addToItemMap({},container)
+        this.items = this.addToItemMap({},container)
         if(!!container.layout){
             if(!!container.layout.tiles){
-                container.layout.tiles.forEach(tile => {this.itemsMap = this.addToItemMap(this.itemsMap,tile)})
+                container.layout.tiles.forEach(tile => {this.items = this.addToItemMap(this.items,tile)})
             }
         }
     }

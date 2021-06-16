@@ -1,3 +1,22 @@
-.highlight{
-    background:orange;
+input {
+    width: 100%;
+    height: 30px;
 }
+
+.mat-card-header-text {
+    width: 100%;
+    height: 20px;
+}
+
+mat-card-header{
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+mat-card-content{
+    width: 100%;
+}
+
+
+
+
