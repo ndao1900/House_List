@@ -1,20 +1,20 @@
 <div [ngStyle]="{'position':'relative'}">
-    <div class="p-bar-container fill">
+    <mat-card class="item-info-container fill">
+        <mat-card-header class="item-header">
+            <mat-card-title>{{itemName}}</mat-card-title>
+            <mat-card-subtitle class="item-detail">
+                <span>count: {{quantity}}</span>
+                <span>Days Left: {{daysLeft}}</span>
+            </mat-card-subtitle>
+            <button mat-icon-button [matMenuTriggerFor]="itemMenu" class="item-menu-button">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #itemMenu>
+                <input (click)="$event.stopPropagation()" [(ngModel)]="daysLeft" type="number">
+            </mat-menu>
+        </mat-card-header>
+    </mat-card>
+    <div class="p-bar-container">
         <app-progress-bar [percentage]="getProgress()" [style]="getProgressStyle()"></app-progress-bar>
-    </div>
-    <div class="item-info-container fill">
-        <div> {{itemName}} </div>
-        <div class="quantityCell">
-            <div *ngIf="canInteract" class="clickable" style="color:red" 
-                (click)="handleQuantityChange($event, -1)"
-            > - </div>
-            {{quantity > 1? 'x'+quantity:''}}
-            <div *ngIf="canInteract" class="clickable" style="color:green"
-                (click)="handleQuantityChange($event, 1)"
-            > + </div>
-        </div>
-        <div> {{containerName}} </div>
-        <div> {{daysLeft}} </div>
-        <input [(ngModel)]="daysLeft" type="number">
     </div>
 </div>

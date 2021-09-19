@@ -38,14 +38,14 @@ export class ItemListEntryRowComponent implements OnInit {
   }
 
   getProgress(){
-    if (this.daysLeft < 0) return "0";
+    if (this.daysLeft < 0) return "2";
     if (this.daysLeft > this.sessionSv.getItem(this.itemName).lifetime) return "100";
     return (((1.0*this.daysLeft) / this.sessionSv.getItem(this.itemName).lifetime) *100).toString()
   }
 
   getProgressStyle(){
     const progress = parseFloat(this.getProgress());
-    const color = progress > 50? "green" : (progress > 20? "yellow" : "red");
+    const color = progress > 50? "green" : (progress > 20? "orange" : "red");
     return {
       "opacity": 0.5,
       "background-color": color

@@ -6,6 +6,8 @@ import { Injectable } from '@angular/core';
 export class EnvService {
 
   env = 'dev'
+  useMockData = true;
+  
   constructor() { }
 
   getBE_URL(){

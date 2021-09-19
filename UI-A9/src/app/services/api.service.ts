@@ -3,6 +3,8 @@ import { SessionService } from './session.service';
 import { HttpClient } from '@angular/common/http';
 import { SERVICES } from '../interceptors/base-url-interceptor.service';
 import { Container } from '../data-model/container'
+import { EnvService } from './env.service';
+import userData from '../../assets/mockUser.json';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,7 @@ export class ApiService {
   itemStore;
   containerMap;
 
-  constructor(private sessionSv:SessionService, private httpClient:HttpClient) {
+  constructor(private sessionSv:SessionService, private httpClient:HttpClient, private envSv:EnvService) {
     sessionSv.getUser().subscribe( user => {this.user = user});
   }
 
@@ -70,19 +72,23 @@ export class ApiService {
   // } 
 
   async getUser(id='60b303e782c249181cfbc19b'){
-    return new Promise( (resolve, reject) => {
-      this.httpClient.get(`/users/${id}`, {headers: {service: SERVICES.BACKEND}}).toPromise()
-        .then(
-          (user) => {
-            this.sessionSv.setUser(user);
-            resolve(user)
-          }
-      )
-      .catch( e =>{
-        console.error(e)
-        reject(e)
-      })
-    });
+    if(this.envSv.useMockData){
+      return new Promise((resolve, reject) => resolve(userData))
+    } else {
+      return new Promise( (resolve, reject) => {
+        this.httpClient.get(`/users/${id}`, {headers: {service: SERVICES.BACKEND}}).toPromise()
+          .then(
+            (user) => {
+              this.sessionSv.setUser(user);
+              resolve(user)
+            }
+        )
+        .catch( e =>{
+          console.error(e)
+          reject(e)
+        })
+      });
+    }
   }
 
   // async getContainer(containerId){
