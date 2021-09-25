@@ -31,7 +31,7 @@ export class UtilService {
     return map
   }
 
-  isAllTrue(map){
+  areAllValuesTrue(map){
     let ret = true;
     for(let id in map){
       if(!map[id])

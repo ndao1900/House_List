@@ -16,7 +16,7 @@ import { EditContainerLayoutComponent } from './edit-container-layout/edit-conta
 import { GridsterModule } from 'angular-gridster2';
 import { GridCustomItemComponent } from './grid-custom-item/grid-custom-item.component';
 import { EditGridItemPanelComponent } from './edit-grid-item-panel/edit-grid-item-panel.component';
-// import { ContainerComponent } from './container/container.component';
+import { ContainerComponent } from './container/container.component';
 import { ItemListEntryComponent } from './items-list/item-list-entry/item-list-entry.component';
 import { ItemsListComponent } from './items-list/items-list.component';
 // import { ItemLookupComponent } from './item-lookup/item-lookup.component';
@@ -35,7 +35,7 @@ import { ProgressBarComponent } from './progress-bar/progress-bar.component';
     EditContainerLayoutComponent,
     GridCustomItemComponent,
     EditGridItemPanelComponent,
-    // ContainerComponent,
+    ContainerComponent,
     ItemListEntryComponent,
     ItemsListComponent,
     // ItemLookupComponent,

@@ -16,7 +16,11 @@
         </div>
     </mat-card-content>
     <mat-card-actions *ngIf="!readOnly">
-        <button (click)="handleAddItemClick()" mat-raised-button>ADD ITEM</button>
-        <button (click)="handleEditLayoutClick()" mat-raised-button>EDIT LAYOUT</button>
+        <button mat-icon-button (click)="handleAddItemClick()" mat-raised-button>
+            <mat-icon>add</mat-icon>
+        </button>
+        <button mat-icon-button (click)="handleEditLayoutClick()" mat-raised-button>
+            <mat-icon>edit</mat-icon>
+        </button>
     </mat-card-actions>
 </mat-card>

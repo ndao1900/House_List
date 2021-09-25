@@ -57,6 +57,6 @@ export class ItemsListComponent implements OnInit {
   }
 
   handleHeaderClick(){
-    this.onSelect.emit(this.container._id)
+    this.onSelect.emit(this.container.name)
   }
 }
